@@ -1,9 +1,7 @@
-// let i: number = 2;
-// console.log(i);
+let i: number = 2;
+console.log(i);
 
-// var mapName = 'q3tourney2';
-
-import * as main2 from "./main";
+// import * as main2 from "./main";
 
 /*
  * main.js - Setup for Quake 3 WebGL demo
@@ -35,8 +33,7 @@ import * as main2 from "./main";
 // The bits that need to change to load different maps are right here!
 // ===========================================
 
-console.log("Declaration of mapname");
-// var mapName = 'q3tourney2';
+var mapName = 'q3tourney2';
 
 // If you're running from your own copy of Quake 3, you'll want to use these shaders
 /*var mapShaders = [
@@ -52,40 +49,39 @@ console.log("Declaration of mapname");
 ];*/
 
 // For my demo, I compiled only the shaders the map used into a single file for performance reasons
-// var mapShaders = ['scripts/web_demo.shader'];
+var mapShaders = ['scripts/web_demo.shader'];
 
-// // ===========================================
-// // Everything below here is common to all maps
-// var leftViewMat, rightViewMat, projMat;
-// var leftViewport, rightViewport;
-// var activeShader;
-// var map, playerMover;
-// var mobileSite = false;
+// ===========================================
+// Everything below here is common to all maps
+var leftViewMat, rightViewMat, projMat;
+var leftViewport, rightViewport;
+var activeShader;
+var map, playerMover;
+var mobileSite = false;
 
-// var zAngle = 3;
-// var xAngle = 0;
-// var cameraPosition = [0, 0, 0];
-// var onResize = null;
+var zAngle = 3;
+var xAngle = 0;
+var cameraPosition = [0, 0, 0];
+var onResize = null;
 
-// // VR Globals
-// var vrDisplay = null;
+// VR Globals
+var vrDisplay = null;
 
-// // These values are in meters
-// var playerHeight = 57; // Roughly where my eyes sit (1.78 meters off the ground)
-// var vrIPDScale = 32.0; // There are 32 units per meter in Quake 3
-// var vrFrameData = null;
-// var vrPose = null;
+// These values are in meters
+var playerHeight = 57; // Roughly where my eyes sit (1.78 meters off the ground)
+var vrIPDScale = 32.0; // There are 32 units per meter in Quake 3
+var vrFrameData = null;
+var vrPose = null;
 
-// var vrDrawMode = 0;
+var vrDrawMode = 0;
 
-// var SKIP_FRAMES = 0;
-// var REPEAT_FRAMES = 1;
+var SKIP_FRAMES = 0;
+var REPEAT_FRAMES = 1;
 
-// function isVRPresenting() {
-//     return (vrDisplay && vrDisplay.isPresenting);
-// }
-
-// declare var unescape;
+function isVRPresenting() {
+    console.log();
+    return (vrDisplay && vrDisplay.isPresenting);
+}
 
 // function getQueryVariable(variable) {
 //     var query = window.location.search.substring(1);
@@ -98,8 +94,6 @@ console.log("Declaration of mapname");
 //     }
 //     return null;
 // }
-
-// declare var mat4;
 
 // // Set up basic GL State up front
 // function initGL(gl, canvas) {
@@ -119,7 +113,6 @@ console.log("Declaration of mapname");
 
 //     initMap(gl);
 // }
-// declare var titleEl;
 
 // // Load the map
 // function initMap(gl) {
@@ -571,7 +564,7 @@ console.log("Declaration of mapname");
 
 // // Utility function that tests a list of webgl contexts and returns when one can be created
 // // Hopefully this future-proofs us a bit
-// function getAvailableContext(canvas, contextList) {
+function getAvailableContext(canvas, contextList) {
 //     if (canvas.getContext) {
 //         for (var i = 0; i < contextList.length; ++i) {
 //             try {
@@ -581,10 +574,8 @@ console.log("Declaration of mapname");
 //             } catch (ex) { }
 //         }
 //     }
-//     return null;
-// }
-
-// declare var timestamp;
+    return null;
+}
 
 // function renderLoop(gl, stats) {
 //     var startTime = new Date().getTime();
@@ -619,122 +610,124 @@ console.log("Declaration of mapname");
 //     window.requestAnimationFrame(onRequestedFrame);
 // }
 
-// function main() {
-//     var stats = new Stats();
-//     document.getElementById("viewport-frame").appendChild(stats.domElement);
+function main() {
+    // var stats = new Stats();
+    var stats = new stats();
+    document.getElementById("viewport-frame").appendChild(stats.domElement);
 
-//     var canvas = document.getElementById("viewport");
+    var canvas: any = document.getElementById("viewport");
 
-//     // Get the GL Context (try 'webgl' first, then fallback)
-//     var gl = getAvailableContext(canvas, ['webgl', 'experimental-webgl']);
+    // Get the GL Context (try 'webgl' first, then fallback)
+    var gl = getAvailableContext(canvas, ['webgl', 'experimental-webgl']);
 
-//     onResize = function () {
-//         if (vrDisplay && vrDisplay.isPresenting) {
-//             var leftEye = vrDisplay.getEyeParameters("left");
-//             var rightEye = vrDisplay.getEyeParameters("right");
+    onResize = function () {
+        if (vrDisplay && vrDisplay.isPresenting) {
+            var leftEye = vrDisplay.getEyeParameters("left");
+            var rightEye = vrDisplay.getEyeParameters("right");
 
-//             canvas.width = Math.max(leftEye.renderWidth, rightEye.renderWidth) * 2;
-//             canvas.height = Math.max(leftEye.renderHeight, rightEye.renderHeight);
-//         } else {
-//             var devicePixelRatio = window.devicePixelRatio || 1;
+            canvas.width = Math.max(leftEye.renderWidth, rightEye.renderWidth) * 2;
+            canvas.height = Math.max(leftEye.renderHeight, rightEye.renderHeight);
+        } else {
+            var devicePixelRatio = window.devicePixelRatio || 1;
 
-//             if (document.fullscreenElement) {
-//                 canvas.width = screen.width * devicePixelRatio;
-//                 canvas.height = screen.height * devicePixelRatio;
-//             } else {
-//                 canvas.width = canvas.clientWidth * devicePixelRatio;
-//                 canvas.height = canvas.clientHeight * devicePixelRatio;
-//             }
+            if (document.fullscreenElement) {
+                canvas.width = screen.width * devicePixelRatio;
+                canvas.height = screen.height * devicePixelRatio;
+            } else {
+                canvas.width = canvas.clientWidth * devicePixelRatio;
+                canvas.height = canvas.clientHeight * devicePixelRatio;
+            }
 
-//             if (!isVRPresenting()) {
-//                 gl.viewport(0, 0, canvas.width, canvas.height);
-//                 mat4.perspective(projMat, 45.0, canvas.width / canvas.height, 1.0, 4096.0);
-//             }
-//         }
-//     }
+            if (!isVRPresenting()) {
+                gl.viewport(0, 0, canvas.width, canvas.height);
+                mat4.perspective(projMat, 45.0, canvas.width / canvas.height, 1.0, 4096.0);
+            }
+        }
+    }
 
-//     if (!gl) {
-//         document.getElementById('viewport-frame').style.display = 'none';
-//         document.getElementById('webgl-error').style.display = 'block';
-//     } else {
-//         document.getElementById('viewport-info').style.display = 'block';
-//         initEvents();
-//         initGL(gl, canvas);
-//         renderLoop(gl, stats);
-//     }
+    if (!gl) {
+        document.getElementById('viewport-frame').style.display = 'none';
+        document.getElementById('webgl-error').style.display = 'block';
+    } else {
+        document.getElementById('viewport-info').style.display = 'block';
+        initEvents();
+        initGL(gl, canvas);
+        renderLoop(gl, stats);
+    }
 
-//     onResize();
-//     window.addEventListener("resize", onResize, false);
+    onResize();
+    window.addEventListener("resize", onResize, false);
 
-//     var showFPS = document.getElementById("showFPS");
-//     showFPS.addEventListener("change", function () {
-//         stats.domElement.style.display = showFPS.checked ? "block" : "none";
-//     });
+    var showFPS = document.getElementById("showFPS");
+    showFPS.addEventListener("change", function () {
+        stats.domElement.style.display = showFPS.checked ? "block" : "none";
+    });
 
-//     function EnumerateVRDisplays(displays) {
-//         if (displays.length > 0) {
-//             vrDisplay = displays[0];
+    function EnumerateVRDisplays(displays) {
+        if (displays.length > 0) {
+            vrDisplay = displays[0];
 
-//             vrDisplay.depthNear = 1.0;
-//             vrDisplay.depthFar = 4096.0;
+            vrDisplay.depthNear = 1.0;
+            vrDisplay.depthFar = 4096.0;
 
-//             vrFrameData = new VRFrameData();
+            vrFrameData = new VRFrameData();
 
-//             var vrToggle = document.getElementById("vrToggle");
-//             vrToggle.style.display = "block";
-//             var mobileVrBtn = document.getElementById("mobileVrBtn");
-//             mobileVrBtn.style.display = "block";
+            var vrToggle = document.getElementById("vrToggle");
+            vrToggle.style.display = "block";
+            var mobileVrBtn = document.getElementById("mobileVrBtn");
+            mobileVrBtn.style.display = "block";
 
-//             // Handle VR presentation change
-//             window.addEventListener("vrdisplaypresentchange", function () {
-//                 onResize();
-//             }, false);
-//         }
-//     }
+            // Handle VR presentation change
+            window.addEventListener("vrdisplaypresentchange", function () {
+                onResize();
+            }, false);
+        }
+    }
 
-//     if (navigator.getVRDisplays) {
-//         navigator.getVRDisplays().then(EnumerateVRDisplays);
-//     }
+    if (navigator.getVRDisplays) {
+        navigator.getVRDisplays().then(EnumerateVRDisplays);
+    }
 
-//     /*var playMusic = document.getElementById("playMusic");
-//     playMusic.addEventListener("change", function() {
-//         if(map) {
-//             map.playMusic(playMusic.checked);
-//         }
-//     });*/
+    /*var playMusic = document.getElementById("playMusic");
+    playMusic.addEventListener("change", function() {
+        if(map) {
+            map.playMusic(playMusic.checked);
+        }
+    });*/
 
-//     // Handle fullscreen transition
-//     var viewportFrame = document.getElementById("viewport-frame");
-//     var viewport = document.getElementById("viewport");
-//     document.addEventListener("fullscreenchange", function () {
-//         if (document.fullscreenElement) {
-//             viewport.requestPointerLock(); // Attempt to lock the mouse automatically on fullscreen
-//         }
-//         onResize();
-//     }, false);
+    // Handle fullscreen transition
+    var viewportFrame = document.getElementById("viewport-frame");
+    var viewport = document.getElementById("viewport");
+    document.addEventListener("fullscreenchange", function () {
+        if (document.fullscreenElement) {
+            viewport.requestPointerLock(); // Attempt to lock the mouse automatically on fullscreen
+        }
+        onResize();
+    }, false);
 
-//     // Fullscreen
-//     function goFullscreen() {
-//         viewportFrame.requestFullScreen();
-//     }
-//     var fullscreenButton = document.getElementById('fullscreenBtn');
-//     var mobileFullscreenBtn = document.getElementById("mobileFullscreenBtn");
-//     fullscreenButton.addEventListener('click', goFullscreen, false);
-//     mobileFullscreenBtn.addEventListener('click', goFullscreen, false);
+    // Fullscreen
+    function goFullscreen() {
+        // viewportFrame.requestFullScreen();
+        viewportFrame.requestFullscreen();
+    }
+    var fullscreenButton = document.getElementById('fullscreenBtn');
+    var mobileFullscreenBtn = document.getElementById("mobileFullscreenBtn");
+    fullscreenButton.addEventListener('click', goFullscreen, false);
+    mobileFullscreenBtn.addEventListener('click', goFullscreen, false);
 
-//     // VR
-//     function presentVR() {
-//         if (vrDisplay.isPresenting) {
-//             vrDisplay.exitPresent();
-//         } else {
-//             xAngle = 0.0;
-//             vrDisplay.requestPresent([{ source: viewport }]);
-//         }
-//     }
-//     var vrBtn = document.getElementById("vrBtn");
-//     var mobileVrBtn = document.getElementById("mobileVrBtn");
-//     vrBtn.addEventListener("click", presentVR, false);
-//     mobileVrBtn.addEventListener("click", presentVR, false);
+    // VR
+    function presentVR() {
+        if (vrDisplay.isPresenting) {
+            vrDisplay.exitPresent();
+        } else {
+            xAngle = 0.0;
+            vrDisplay.requestPresent([{ source: viewport }]);
+        }
+    }
+    var vrBtn = document.getElementById("vrBtn");
+    var mobileVrBtn = document.getElementById("mobileVrBtn");
+    vrBtn.addEventListener("click", presentVR, false);
+    mobileVrBtn.addEventListener("click", presentVR, false);
 
-// }
-// window.addEventListener("load", main); // Fire this once the page is loaded up
+}
+window.addEventListener("load", main); // Fire this once the page is loaded up

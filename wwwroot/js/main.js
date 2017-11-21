@@ -28,8 +28,7 @@
 // The bits that need to change to load different maps are right here!
 // ===========================================
 
-console.log("Declaration of mapname");
-// var mapName = 'q3tourney2';
+var mapName = 'q3tourney2';
 
 // If you're running from your own copy of Quake 3, you'll want to use these shaders
 /*var mapShaders = [
@@ -75,6 +74,7 @@ var SKIP_FRAMES = 0;
 var REPEAT_FRAMES = 1;
 
 function isVRPresenting() {
+    console.log();
     return (vrDisplay && vrDisplay.isPresenting);
 }
 
