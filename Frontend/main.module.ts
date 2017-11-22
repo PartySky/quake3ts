@@ -96,23 +96,23 @@ function isVRPresenting() {
 // }
 
 // // Set up basic GL State up front
-// function initGL(gl, canvas) {
-//     gl.clearColor(0.0, 0.0, 0.0, 1.0);
-//     gl.clearDepth(1.0);
+function initGL(gl, canvas) {
+    //     gl.clearColor(0.0, 0.0, 0.0, 1.0);
+    //     gl.clearDepth(1.0);
 
-//     gl.enable(gl.DEPTH_TEST);
-//     gl.enable(gl.BLEND);
-//     gl.enable(gl.CULL_FACE);
+    //     gl.enable(gl.DEPTH_TEST);
+    //     gl.enable(gl.BLEND);
+    //     gl.enable(gl.CULL_FACE);
 
-//     leftViewMat = mat4.create();
-//     rightViewMat = mat4.create();
-//     projMat = mat4.create();
+    //     leftViewMat = mat4.create();
+    //     rightViewMat = mat4.create();
+    //     projMat = mat4.create();
 
-//     leftViewport = { x: 0, y: 0, width: 0, height: 0 };
-//     rightViewport = { x: 0, y: 0, width: 0, height: 0 };
+    //     leftViewport = { x: 0, y: 0, width: 0, height: 0 };
+    //     rightViewport = { x: 0, y: 0, width: 0, height: 0 };
 
-//     initMap(gl);
-// }
+    //     initMap(gl);
+}
 
 // // Load the map
 // function initMap(gl) {
@@ -424,195 +424,307 @@ function isVRPresenting() {
 // }
 
 // // Set up event handling
-// function initEvents() {
-//     var movingModel = false;
-//     var lastX = 0;
-//     var lastY = 0;
-//     var lastMoveX = 0;
-//     var lastMoveY = 0;
-//     var viewport = document.getElementById("viewport");
-//     var viewportFrame = document.getElementById("viewport-frame");
+function initEvents() {
+    //     var movingModel = false;
+    //     var lastX = 0;
+    //     var lastY = 0;
+    //     var lastMoveX = 0;
+    //     var lastMoveY = 0;
+    //     var viewport = document.getElementById("viewport");
+    //     var viewportFrame = document.getElementById("viewport-frame");
 
-//     document.addEventListener("keydown", function (event) {
-//         if (event.keyCode == 32 && !pressed[32]) {
-//             playerMover.jump();
-//         }
-//         pressed[event.keyCode] = true;
-//         if ((event.keyCode == 'W'.charCodeAt(0) ||
-//             event.keyCode == 'S'.charCodeAt(0) ||
-//             event.keyCode == 'A'.charCodeAt(0) ||
-//             event.keyCode == 'D'.charCodeAt(0) ||
-//             event.keyCode == 32) && !event.ctrlKey) {
-//             event.preventDefault();
-//         }
-//     }, false);
+    //     document.addEventListener("keydown", function (event) {
+    //         if (event.keyCode == 32 && !pressed[32]) {
+    //             playerMover.jump();
+    //         }
+    //         pressed[event.keyCode] = true;
+    //         if ((event.keyCode == 'W'.charCodeAt(0) ||
+    //             event.keyCode == 'S'.charCodeAt(0) ||
+    //             event.keyCode == 'A'.charCodeAt(0) ||
+    //             event.keyCode == 'D'.charCodeAt(0) ||
+    //             event.keyCode == 32) && !event.ctrlKey) {
+    //             event.preventDefault();
+    //         }
+    //     }, false);
 
-//     document.addEventListener("keypress", function (event) {
-//         if (event.charCode == 'R'.charCodeAt(0) || event.charCode == 'r'.charCodeAt(0)) {
-//             respawnPlayer(-1);
-//         }
-//         if (event.charCode == 'C'.charCodeAt(0) || event.charCode == 'c'.charCodeAt(0)) {
-//             if (vrDisplay) {
-//                 vrDisplay.resetPose();
-//             }
-//         }
-//     }, false);
+    //     document.addEventListener("keypress", function (event) {
+    //         if (event.charCode == 'R'.charCodeAt(0) || event.charCode == 'r'.charCodeAt(0)) {
+    //             respawnPlayer(-1);
+    //         }
+    //         if (event.charCode == 'C'.charCodeAt(0) || event.charCode == 'c'.charCodeAt(0)) {
+    //             if (vrDisplay) {
+    //                 vrDisplay.resetPose();
+    //             }
+    //         }
+    //     }, false);
 
-//     document.addEventListener("keyup", function (event) {
-//         pressed[event.keyCode] = false;
-//     }, false);
+    //     document.addEventListener("keyup", function (event) {
+    //         pressed[event.keyCode] = false;
+    //     }, false);
 
-//     function startLook(x, y) {
-//         movingModel = true;
+    //     function startLook(x, y) {
+    //         movingModel = true;
 
-//         lastX = x;
-//         lastY = y;
-//     }
+    //         lastX = x;
+    //         lastY = y;
+    //     }
 
-//     function endLook() {
-//         movingModel = false;
-//     }
+    //     function endLook() {
+    //         movingModel = false;
+    //     }
 
-//     function moveLook(x, y) {
-//         var xDelta = x - lastX;
-//         var yDelta = y - lastY;
-//         lastX = x;
-//         lastY = y;
+    //     function moveLook(x, y) {
+    //         var xDelta = x - lastX;
+    //         var yDelta = y - lastY;
+    //         lastX = x;
+    //         lastY = y;
 
-//         if (movingModel) {
-//             moveLookLocked(xDelta, yDelta);
-//         }
-//     }
+    //         if (movingModel) {
+    //             moveLookLocked(xDelta, yDelta);
+    //         }
+    //     }
 
-//     function startMove(x, y) {
-//         lastMoveX = x;
-//         lastMoveY = y;
-//     }
+    //     function startMove(x, y) {
+    //         lastMoveX = x;
+    //         lastMoveY = y;
+    //     }
 
-//     function moveUpdate(x, y, frameTime) {
-//         var xDelta = x - lastMoveX;
-//         var yDelta = y - lastMoveY;
-//         lastMoveX = x;
-//         lastMoveY = y;
+    //     function moveUpdate(x, y, frameTime) {
+    //         var xDelta = x - lastMoveX;
+    //         var yDelta = y - lastMoveY;
+    //         lastMoveX = x;
+    //         lastMoveY = y;
 
-//         var dir = [xDelta, yDelta * -1, 0];
+    //         var dir = [xDelta, yDelta * -1, 0];
 
-//         moveViewOriented(dir, frameTime * 2);
-//     }
+    //         moveViewOriented(dir, frameTime * 2);
+    //     }
 
-//     viewport.addEventListener("click", function (event) {
-//         viewport.requestPointerLock();
-//     }, false);
+    //     viewport.addEventListener("click", function (event) {
+    //         viewport.requestPointerLock();
+    //     }, false);
 
-//     // Mouse handling code
-//     // When the mouse is pressed it rotates the players view
-//     viewport.addEventListener("mousedown", function (event) {
-//         if (event.which == 1) {
-//             startLook(event.pageX, event.pageY);
-//         }
-//     }, false);
-//     viewport.addEventListener("mouseup", function (event) {
-//         endLook();
-//     }, false);
-//     viewportFrame.addEventListener("mousemove", function (event) {
-//         if (document.pointerLockElement) {
-//             moveLookLocked(event.movementX, event.movementY);
-//         } else {
-//             moveLook(event.pageX, event.pageY);
-//         }
-//     }, false);
+    //     // Mouse handling code
+    //     // When the mouse is pressed it rotates the players view
+    //     viewport.addEventListener("mousedown", function (event) {
+    //         if (event.which == 1) {
+    //             startLook(event.pageX, event.pageY);
+    //         }
+    //     }, false);
+    //     viewport.addEventListener("mouseup", function (event) {
+    //         endLook();
+    //     }, false);
+    //     viewportFrame.addEventListener("mousemove", function (event) {
+    //         if (document.pointerLockElement) {
+    //             moveLookLocked(event.movementX, event.movementY);
+    //         } else {
+    //             moveLook(event.pageX, event.pageY);
+    //         }
+    //     }, false);
 
-//     // Touch handling code
-//     viewport.addEventListener('touchstart', function (event) {
-//         var touches = event.touches;
-//         switch (touches.length) {
-//             case 1: // Single finger looks around
-//                 startLook(touches[0].pageX, touches[0].pageY);
-//                 break;
-//             case 2: // Two fingers moves
-//                 startMove(touches[0].pageX, touches[0].pageY);
-//                 break;
-//             case 3: // Three finger tap jumps
-//                 playerMover.jump();
-//                 break;
-//             default:
-//                 return;
-//         }
-//         event.stopPropagation();
-//         event.preventDefault();
-//     }, false);
-//     viewport.addEventListener('touchend', function (event) {
-//         endLook();
-//         return false;
-//     }, false);
-//     viewport.addEventListener('touchmove', function (event) {
-//         var touches = event.touches;
-//         switch (touches.length) {
-//             case 1:
-//                 moveLook(touches[0].pageX, touches[0].pageY);
-//                 break;
-//             case 2:
-//                 moveUpdate(touches[0].pageX, touches[0].pageY, 16);
-//                 break;
-//             default:
-//                 return;
-//         }
-//         event.stopPropagation();
-//         event.preventDefault();
-//     }, false);
-// }
+    //     // Touch handling code
+    //     viewport.addEventListener('touchstart', function (event) {
+    //         var touches = event.touches;
+    //         switch (touches.length) {
+    //             case 1: // Single finger looks around
+    //                 startLook(touches[0].pageX, touches[0].pageY);
+    //                 break;
+    //             case 2: // Two fingers moves
+    //                 startMove(touches[0].pageX, touches[0].pageY);
+    //                 break;
+    //             case 3: // Three finger tap jumps
+    //                 playerMover.jump();
+    //                 break;
+    //             default:
+    //                 return;
+    //         }
+    //         event.stopPropagation();
+    //         event.preventDefault();
+    //     }, false);
+    //     viewport.addEventListener('touchend', function (event) {
+    //         endLook();
+    //         return false;
+    //     }, false);
+    //     viewport.addEventListener('touchmove', function (event) {
+    //         var touches = event.touches;
+    //         switch (touches.length) {
+    //             case 1:
+    //                 moveLook(touches[0].pageX, touches[0].pageY);
+    //                 break;
+    //             case 2:
+    //                 moveUpdate(touches[0].pageX, touches[0].pageY, 16);
+    //                 break;
+    //             default:
+    //                 return;
+    //         }
+    //         event.stopPropagation();
+    //         event.preventDefault();
+    //     }, false);
+}
 
 // // Utility function that tests a list of webgl contexts and returns when one can be created
 // // Hopefully this future-proofs us a bit
 function getAvailableContext(canvas, contextList) {
-//     if (canvas.getContext) {
-//         for (var i = 0; i < contextList.length; ++i) {
-//             try {
-//                 var context = canvas.getContext(contextList[i], { antialias: false });
-//                 if (context !== null)
-//                     return context;
-//             } catch (ex) { }
-//         }
-//     }
+    //     if (canvas.getContext) {
+    //         for (var i = 0; i < contextList.length; ++i) {
+    //             try {
+    //                 var context = canvas.getContext(contextList[i], { antialias: false });
+    //                 if (context !== null)
+    //                     return context;
+    //             } catch (ex) { }
+    //         }
+    //     }
     return null;
 }
 
-// function renderLoop(gl, stats) {
-//     var startTime = new Date().getTime();
-//     var lastTimestamp = startTime;
-//     var lastFps = startTime;
+function renderLoop(gl, stats) {
+    //     var startTime = new Date().getTime();
+    //     var lastTimestamp = startTime;
+    //     var lastFps = startTime;
 
-//     var frameId = 0;
+    //     var frameId = 0;
 
-//     function onRequestedFrame() {
-//         timestamp = new Date().getTime();
+    //     function onRequestedFrame() {
+    //         timestamp = new Date().getTime();
 
-//         if (vrDisplay && vrDisplay.isPresenting) {
-//             vrDisplay.requestAnimationFrame(onRequestedFrame);
-//         } else {
-//             window.requestAnimationFrame(onRequestedFrame);
-//         }
+    //         if (vrDisplay && vrDisplay.isPresenting) {
+    //             vrDisplay.requestAnimationFrame(onRequestedFrame);
+    //         } else {
+    //             window.requestAnimationFrame(onRequestedFrame);
+    //         }
 
-//         frameId++;
-//         if (SKIP_FRAMES != 0 && frameId % SKIP_FRAMES != 0)
-//             return;
+    //         frameId++;
+    //         if (SKIP_FRAMES != 0 && frameId % SKIP_FRAMES != 0)
+    //             return;
 
-//         stats.begin();
+    //         stats.begin();
 
-//         onFrame(gl, {
-//             timestamp: timestamp,
-//             elapsed: timestamp - startTime,
-//             frameTime: timestamp - lastTimestamp
-//         });
+    //         onFrame(gl, {
+    //             timestamp: timestamp,
+    //             elapsed: timestamp - startTime,
+    //             frameTime: timestamp - lastTimestamp
+    //         });
 
-//         stats.end();
-//     }
-//     window.requestAnimationFrame(onRequestedFrame);
-// }
+    //         stats.end();
+    //     }
+    //     window.requestAnimationFrame(onRequestedFrame);
+}
+
+declare var mat4;
+declare var getVRDisplays;
+// declare var Stats;
+
+// import * as Stats from "./util/stats"
+
+// Stats();
+
+
+
+/// function test
+declare var appendChild;
+
+var Stats = function () {
+    console.log("export check");
+    var l = Date.now()
+        , m = l
+        , g = 0
+        , n = Infinity
+        , o = 0
+        , h = 0
+        , p = Infinity
+        , q = 0
+        , r = 0
+        , s = 0
+        , f = document.createElement("div");
+    f.id = "stats";
+    f.addEventListener("mousedown", function (b) {
+        b.preventDefault();
+        t(++s % 2)
+    }, !1);
+    f.style.cssText = "width:80px;opacity:0.9;cursor:pointer";
+    var a = document.createElement("div");
+    a.id = "fps";
+    a.style.cssText = "padding:0 0 3px 3px;text-align:left;background-color:#002";
+    f.appendChild(a);
+    var i = document.createElement("div");
+    i.id = "fpsText";
+    i.style.cssText = "color:#0ff;font-family:Helvetica,Arial,sans-serif;font-size:9px;font-weight:bold;line-height:15px";
+    i.innerHTML = "FPS";
+    a.appendChild(i);
+    var c = document.createElement("div");
+    c.id = "fpsGraph";
+    c.style.cssText = "position:relative;width:74px;height:30px;background-color:#0ff";
+    for (a.appendChild(c); 74 > c.children.length;) {
+        var j = document.createElement("span");
+        j.style.cssText = "width:1px;height:30px;float:left;background-color:#113";
+        c.appendChild(j)
+    }
+    var d = document.createElement("div");
+    d.id = "ms";
+    d.style.cssText = "padding:0 0 3px 3px;text-align:left;background-color:#020;display:none";
+    f.appendChild(d);
+    var k = document.createElement("div");
+    k.id = "msText";
+    k.style.cssText = "color:#0f0;font-family:Helvetica,Arial,sans-serif;font-size:9px;font-weight:bold;line-height:15px";
+    k.innerHTML = "MS";
+    d.appendChild(k);
+    var e = document.createElement("div");
+    e.id = "msGraph";
+    e.style.cssText = "position:relative;width:74px;height:30px;background-color:#0f0";
+    for (d.appendChild(e); 74 > e.children.length;)
+        j = document.createElement("span"),
+            j.style.cssText = "width:1px;height:30px;float:left;background-color:#131",
+            e.appendChild(j);
+    var t = function (b) {
+        s = b;
+        switch (s) {
+            case 0:
+                a.style.display = "block";
+                d.style.display = "none";
+                break;
+            case 1:
+                a.style.display = "none",
+                    d.style.display = "block"
+        }
+    };
+    return {
+        REVISION: 12,
+        domElement: f,
+        setMode: t,
+        begin: function () {
+            l = Date.now()
+        },
+        end: function () {
+            var b = Date.now();
+            g = b - l;
+            n = Math.min(n, g);
+            o = Math.max(o, g);
+            k.textContent = g + " MS (" + n + "-" + o + ")";
+            var a = Math.min(30, 30 - 30 * (g / 200));
+            // e.appendChild(e.firstChild).style.height = a + "px";
+            // e.appendChild(e.firstChild).style.height = a + "px";
+            r++;
+            b > m + 1E3 && (h = Math.round(1E3 * r / (b - m)),
+                p = Math.min(p, h),
+                q = Math.max(q, h),
+                i.textContent = h + " FPS (" + p + "-" + q + ")",
+                a = Math.min(30, 30 - 30 * (h / 100)),
+                // c.appendChild(c.firstChild).style.height = a + "px",
+                m = b,
+                r = 0);
+            return b
+        },
+        update: function () {
+            l = this.end()
+        }
+    }
+};
+
+/// end of function test
 
 function main() {
     // var stats = new Stats();
-    var stats = new stats();
+    var stats = Stats();
     document.getElementById("viewport-frame").appendChild(stats.domElement);
 
     var canvas: any = document.getElementById("viewport");
@@ -658,7 +770,7 @@ function main() {
     onResize();
     window.addEventListener("resize", onResize, false);
 
-    var showFPS = document.getElementById("showFPS");
+    var showFPS: any = document.getElementById("showFPS");
     showFPS.addEventListener("change", function () {
         stats.domElement.style.display = showFPS.checked ? "block" : "none";
     });
@@ -670,7 +782,8 @@ function main() {
             vrDisplay.depthNear = 1.0;
             vrDisplay.depthFar = 4096.0;
 
-            vrFrameData = new VRFrameData();
+            vrFrameData = new vrFrameData();
+            // vrFrameData = new VRFrameData();
 
             var vrToggle = document.getElementById("vrToggle");
             vrToggle.style.display = "block";
@@ -684,9 +797,9 @@ function main() {
         }
     }
 
-    if (navigator.getVRDisplays) {
-        navigator.getVRDisplays().then(EnumerateVRDisplays);
-    }
+    // if (navigator.getVRDisplays) {
+    //     navigator.getVRDisplays().then(EnumerateVRDisplays);
+    // }
 
     /*var playMusic = document.getElementById("playMusic");
     playMusic.addEventListener("change", function() {

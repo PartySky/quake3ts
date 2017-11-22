@@ -8,3 +8,6 @@ wwwroot/demo_baseq3/music/*
 wwwroot/demo_baseq3/scripts/*
 wwwroot/demo_baseq3/maps/*
 wwwroot/scripts/*
+.vs/quake3ts/v15/sqlite3/storage.ide
+.vs/config/applicationhost.config
+.vs/quake3ts/v15/.suo

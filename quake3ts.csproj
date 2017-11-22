@@ -29,5 +29,7 @@
     <Folder Include="wwwroot\scripts\" />
     <Folder Include="Method.1\" />
   </ItemGroup>
+
+  <ProjectExtensions><VisualStudio><UserProperties Properties_4launchSettings_1json__JSONSchema="http://json.schemastore.org/package.manifest" /></VisualStudio></ProjectExtensions>
   
 </Project>
