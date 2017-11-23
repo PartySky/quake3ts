@@ -149,70 +149,70 @@ function initGL(gl, canvas) {
 //     onResize();
 // }
 
-// var lastIndex = 0;
+let lastIndex = 0;
 // // "Respawns" the player at a specific spawn point. Passing -1 will move the player to the next spawn point.
-// function respawnPlayer(index) {
-//     if (map.entities && playerMover) {
-//         if (index == -1) {
-//             index = (lastIndex + 1) % map.entities.info_player_deathmatch.length;
-//         }
-//         lastIndex = index;
+function respawnPlayer(index) {
+    if (map.entities && playerMover) {
+        if (index == -1) {
+            index = (lastIndex + 1) % map.entities.info_player_deathmatch.length;
+        }
+        lastIndex = index;
 
-//         var spawnPoint = map.entities.info_player_deathmatch[index];
-//         playerMover.position = [
-//             spawnPoint.origin[0],
-//             spawnPoint.origin[1],
-//             spawnPoint.origin[2] + 30 // Start a little ways above the floor
-//         ];
+        var spawnPoint = map.entities.info_player_deathmatch[index];
+        playerMover.position = [
+            spawnPoint.origin[0],
+            spawnPoint.origin[1],
+            spawnPoint.origin[2] + 30 // Start a little ways above the floor
+        ];
 
-//         playerMover.velocity = [0, 0, 0];
+        playerMover.velocity = [0, 0, 0];
 
-//         zAngle = -(spawnPoint.angle || 0) * (3.1415 / 180) + (3.1415 * 0.5); // Negative angle in radians + 90 degrees
-//         xAngle = 0;
-//     }
-// }
+        zAngle = -(spawnPoint.angle || 0) * (3.1415 / 180) + (3.1415 * 0.5); // Negative angle in radians + 90 degrees
+        xAngle = 0;
+    }
+}
 
-// function eulerFromQuaternion(out, q, order) {
-//     function clamp(value, min, max) {
-//         return (value < min ? min : (value > max ? max : value));
-//     }
-//     // Borrowed from Three.JS :)
-//     // q is assumed to be normalized
-//     // http://www.mathworks.com/matlabcentral/fileexchange/20696-function-to-convert-between-dcm-euler-angles-quaternions-and-euler-vectors/content/SpinCalc.m
-//     var sqx = q[0] * q[0];
-//     var sqy = q[1] * q[1];
-//     var sqz = q[2] * q[2];
-//     var sqw = q[3] * q[3];
+function eulerFromQuaternion(out, q, order) {
+    function clamp(value, min, max) {
+        return (value < min ? min : (value > max ? max : value));
+    }
+    // Borrowed from Three.JS :)
+    // q is assumed to be normalized
+    // http://www.mathworks.com/matlabcentral/fileexchange/20696-function-to-convert-between-dcm-euler-angles-quaternions-and-euler-vectors/content/SpinCalc.m
+    var sqx = q[0] * q[0];
+    var sqy = q[1] * q[1];
+    var sqz = q[2] * q[2];
+    var sqw = q[3] * q[3];
 
-//     if (order === 'XYZ') {
-//         out[0] = Math.atan2(2 * (q[0] * q[3] - q[1] * q[2]), (sqw - sqx - sqy + sqz));
-//         out[1] = Math.asin(clamp(2 * (q[0] * q[2] + q[1] * q[3]), -1, 1));
-//         out[2] = Math.atan2(2 * (q[2] * q[3] - q[0] * q[1]), (sqw + sqx - sqy - sqz));
-//     } else if (order === 'YXZ') {
-//         out[0] = Math.asin(clamp(2 * (q[0] * q[3] - q[1] * q[2]), -1, 1));
-//         out[1] = Math.atan2(2 * (q[0] * q[2] + q[1] * q[3]), (sqw - sqx - sqy + sqz));
-//         out[2] = Math.atan2(2 * (q[0] * q[1] + q[2] * q[3]), (sqw - sqx + sqy - sqz));
-//     } else if (order === 'ZXY') {
-//         out[0] = Math.asin(clamp(2 * (q[0] * q[3] + q[1] * q[2]), -1, 1));
-//         out[1] = Math.atan2(2 * (q[1] * q[3] - q[2] * q[0]), (sqw - sqx - sqy + sqz));
-//         out[2] = Math.atan2(2 * (q[2] * q[3] - q[0] * q[1]), (sqw - sqx + sqy - sqz));
-//     } else if (order === 'ZYX') {
-//         out[0] = Math.atan2(2 * (q[0] * q[3] + q[2] * q[1]), (sqw - sqx - sqy + sqz));
-//         out[1] = Math.asin(clamp(2 * (q[1] * q[3] - q[0] * q[2]), -1, 1));
-//         out[2] = Math.atan2(2 * (q[0] * q[1] + q[2] * q[3]), (sqw + sqx - sqy - sqz));
-//     } else if (order === 'YZX') {
-//         out[0] = Math.atan2(2 * (q[0] * q[3] - q[2] * q[1]), (sqw - sqx + sqy - sqz));
-//         out[1] = Math.atan2(2 * (q[1] * q[3] - q[0] * q[2]), (sqw + sqx - sqy - sqz));
-//         out[2] = Math.asin(clamp(2 * (q[0] * q[1] + q[2] * q[3]), -1, 1));
-//     } else if (order === 'XZY') {
-//         out[0] = Math.atan2(2 * (q[0] * q[3] + q[1] * q[2]), (sqw - sqx + sqy - sqz));
-//         out[1] = Math.atan2(2 * (q[0] * q[2] + q[1] * q[3]), (sqw + sqx - sqy - sqz));
-//         out[2] = Math.asin(clamp(2 * (q[2] * q[3] - q[0] * q[1]), -1, 1));
-//     } else {
-//         console.log('No order given for quaternion to euler conversion.');
-//         return;
-//     }
-// }
+    if (order === 'XYZ') {
+        out[0] = Math.atan2(2 * (q[0] * q[3] - q[1] * q[2]), (sqw - sqx - sqy + sqz));
+        out[1] = Math.asin(clamp(2 * (q[0] * q[2] + q[1] * q[3]), -1, 1));
+        out[2] = Math.atan2(2 * (q[2] * q[3] - q[0] * q[1]), (sqw + sqx - sqy - sqz));
+    } else if (order === 'YXZ') {
+        out[0] = Math.asin(clamp(2 * (q[0] * q[3] - q[1] * q[2]), -1, 1));
+        out[1] = Math.atan2(2 * (q[0] * q[2] + q[1] * q[3]), (sqw - sqx - sqy + sqz));
+        out[2] = Math.atan2(2 * (q[0] * q[1] + q[2] * q[3]), (sqw - sqx + sqy - sqz));
+    } else if (order === 'ZXY') {
+        out[0] = Math.asin(clamp(2 * (q[0] * q[3] + q[1] * q[2]), -1, 1));
+        out[1] = Math.atan2(2 * (q[1] * q[3] - q[2] * q[0]), (sqw - sqx - sqy + sqz));
+        out[2] = Math.atan2(2 * (q[2] * q[3] - q[0] * q[1]), (sqw - sqx + sqy - sqz));
+    } else if (order === 'ZYX') {
+        out[0] = Math.atan2(2 * (q[0] * q[3] + q[2] * q[1]), (sqw - sqx - sqy + sqz));
+        out[1] = Math.asin(clamp(2 * (q[1] * q[3] - q[0] * q[2]), -1, 1));
+        out[2] = Math.atan2(2 * (q[0] * q[1] + q[2] * q[3]), (sqw + sqx - sqy - sqz));
+    } else if (order === 'YZX') {
+        out[0] = Math.atan2(2 * (q[0] * q[3] - q[2] * q[1]), (sqw - sqx + sqy - sqz));
+        out[1] = Math.atan2(2 * (q[1] * q[3] - q[0] * q[2]), (sqw + sqx - sqy - sqz));
+        out[2] = Math.asin(clamp(2 * (q[0] * q[1] + q[2] * q[3]), -1, 1));
+    } else if (order === 'XZY') {
+        out[0] = Math.atan2(2 * (q[0] * q[3] + q[1] * q[2]), (sqw - sqx + sqy - sqz));
+        out[1] = Math.atan2(2 * (q[0] * q[2] + q[1] * q[3]), (sqw + sqx - sqy - sqz));
+        out[2] = Math.asin(clamp(2 * (q[2] * q[3] - q[0] * q[1]), -1, 1));
+    } else {
+        console.log('No order given for quaternion to euler conversion.');
+        return;
+    }
+}
 
 // var lastMove = 0;
 
@@ -330,47 +330,47 @@ function initGL(gl, canvas) {
 // }
 
 // var pressed = new Array(128);
-// var cameraMat = mat4.create();
+var cameraMat = mat4.create();
 
-// function moveLookLocked(xDelta, yDelta) {
-//     zAngle += xDelta * 0.0025;
-//     while (zAngle < 0)
-//         zAngle += Math.PI * 2;
-//     while (zAngle >= Math.PI * 2)
-//         zAngle -= Math.PI * 2;
+function moveLookLocked(xDelta, yDelta) {
+    zAngle += xDelta * 0.0025;
+    while (zAngle < 0)
+        zAngle += Math.PI * 2;
+    while (zAngle >= Math.PI * 2)
+        zAngle -= Math.PI * 2;
 
-//     if (!isVRPresenting()) {
-//         xAngle += yDelta * 0.0025;
-//         while (xAngle < -Math.PI * 0.5)
-//             xAngle = -Math.PI * 0.5;
-//         while (xAngle > Math.PI * 0.5)
-//             xAngle = Math.PI * 0.5;
-//     }
-// }
+    if (!isVRPresenting()) {
+        xAngle += yDelta * 0.0025;
+        while (xAngle < -Math.PI * 0.5)
+            xAngle = -Math.PI * 0.5;
+        while (xAngle > Math.PI * 0.5)
+            xAngle = Math.PI * 0.5;
+    }
+}
 
 // function filterDeadzone(value) {
 //     return Math.abs(value) > 0.35 ? value : 0;
 // }
+declare let vec3;
+var vrEuler = vec3.create();
 
-// var vrEuler = vec3.create();
+function moveViewOriented(dir, frameTime) {
+    if (dir[0] !== 0 || dir[1] !== 0 || dir[2] !== 0) {
+        mat4.identity(cameraMat);
+        if (vrPose) {
+            eulerFromQuaternion(vrEuler, vrPose.orientation, 'YXZ');
+            mat4.rotateZ(cameraMat, cameraMat, zAngle - vrEuler[1]);
+        } else {
+            mat4.rotateZ(cameraMat, cameraMat, zAngle);
+        }
+        mat4.invert(cameraMat, cameraMat);
 
-// function moveViewOriented(dir, frameTime) {
-//     if (dir[0] !== 0 || dir[1] !== 0 || dir[2] !== 0) {
-//         mat4.identity(cameraMat);
-//         if (vrPose) {
-//             eulerFromQuaternion(vrEuler, vrPose.orientation, 'YXZ');
-//             mat4.rotateZ(cameraMat, cameraMat, zAngle - vrEuler[1]);
-//         } else {
-//             mat4.rotateZ(cameraMat, cameraMat, zAngle);
-//         }
-//         mat4.invert(cameraMat, cameraMat);
+        vec3.transformMat4(dir, dir, cameraMat);
+    }
 
-//         vec3.transformMat4(dir, dir, cameraMat);
-//     }
-
-//     // Send desired movement direction to the player mover for collision detection against the map
-//     playerMover.move(dir, frameTime);
-// }
+    // Send desired movement direction to the player mover for collision detection against the map
+    playerMover.move(dir, frameTime);
+}
 
 // function updateInput(frameTime) {
 //     if (!playerMover) { return; }
@@ -423,157 +423,158 @@ function initGL(gl, canvas) {
 //     moveViewOriented(dir, frameTime);
 // }
 
+declare let pressed;
 // // Set up event handling
 function initEvents() {
-    //     var movingModel = false;
-    //     var lastX = 0;
-    //     var lastY = 0;
-    //     var lastMoveX = 0;
-    //     var lastMoveY = 0;
-    //     var viewport = document.getElementById("viewport");
-    //     var viewportFrame = document.getElementById("viewport-frame");
+    var movingModel = false;
+    var lastX = 0;
+    var lastY = 0;
+    var lastMoveX = 0;
+    var lastMoveY = 0;
+    var viewport = document.getElementById("viewport");
+    var viewportFrame = document.getElementById("viewport-frame");
 
-    //     document.addEventListener("keydown", function (event) {
-    //         if (event.keyCode == 32 && !pressed[32]) {
-    //             playerMover.jump();
-    //         }
-    //         pressed[event.keyCode] = true;
-    //         if ((event.keyCode == 'W'.charCodeAt(0) ||
-    //             event.keyCode == 'S'.charCodeAt(0) ||
-    //             event.keyCode == 'A'.charCodeAt(0) ||
-    //             event.keyCode == 'D'.charCodeAt(0) ||
-    //             event.keyCode == 32) && !event.ctrlKey) {
-    //             event.preventDefault();
-    //         }
-    //     }, false);
+    document.addEventListener("keydown", function (event) {
+        if (event.keyCode == 32 && !pressed[32]) {
+            playerMover.jump();
+        }
+        pressed[event.keyCode] = true;
+        if ((event.keyCode == 'W'.charCodeAt(0) ||
+            event.keyCode == 'S'.charCodeAt(0) ||
+            event.keyCode == 'A'.charCodeAt(0) ||
+            event.keyCode == 'D'.charCodeAt(0) ||
+            event.keyCode == 32) && !event.ctrlKey) {
+            event.preventDefault();
+        }
+    }, false);
 
-    //     document.addEventListener("keypress", function (event) {
-    //         if (event.charCode == 'R'.charCodeAt(0) || event.charCode == 'r'.charCodeAt(0)) {
-    //             respawnPlayer(-1);
-    //         }
-    //         if (event.charCode == 'C'.charCodeAt(0) || event.charCode == 'c'.charCodeAt(0)) {
-    //             if (vrDisplay) {
-    //                 vrDisplay.resetPose();
-    //             }
-    //         }
-    //     }, false);
+    document.addEventListener("keypress", function (event) {
+        if (event.charCode == 'R'.charCodeAt(0) || event.charCode == 'r'.charCodeAt(0)) {
+            respawnPlayer(-1);
+        }
+        if (event.charCode == 'C'.charCodeAt(0) || event.charCode == 'c'.charCodeAt(0)) {
+            if (vrDisplay) {
+                vrDisplay.resetPose();
+            }
+        }
+    }, false);
 
-    //     document.addEventListener("keyup", function (event) {
-    //         pressed[event.keyCode] = false;
-    //     }, false);
+    document.addEventListener("keyup", function (event) {
+        pressed[event.keyCode] = false;
+    }, false);
 
-    //     function startLook(x, y) {
-    //         movingModel = true;
+    function startLook(x, y) {
+        movingModel = true;
 
-    //         lastX = x;
-    //         lastY = y;
-    //     }
+        lastX = x;
+        lastY = y;
+    }
 
-    //     function endLook() {
-    //         movingModel = false;
-    //     }
+    function endLook() {
+        movingModel = false;
+    }
 
-    //     function moveLook(x, y) {
-    //         var xDelta = x - lastX;
-    //         var yDelta = y - lastY;
-    //         lastX = x;
-    //         lastY = y;
+    function moveLook(x, y) {
+        var xDelta = x - lastX;
+        var yDelta = y - lastY;
+        lastX = x;
+        lastY = y;
 
-    //         if (movingModel) {
-    //             moveLookLocked(xDelta, yDelta);
-    //         }
-    //     }
+        if (movingModel) {
+            moveLookLocked(xDelta, yDelta);
+        }
+    }
 
-    //     function startMove(x, y) {
-    //         lastMoveX = x;
-    //         lastMoveY = y;
-    //     }
+    function startMove(x, y) {
+        lastMoveX = x;
+        lastMoveY = y;
+    }
 
-    //     function moveUpdate(x, y, frameTime) {
-    //         var xDelta = x - lastMoveX;
-    //         var yDelta = y - lastMoveY;
-    //         lastMoveX = x;
-    //         lastMoveY = y;
+    function moveUpdate(x, y, frameTime) {
+        var xDelta = x - lastMoveX;
+        var yDelta = y - lastMoveY;
+        lastMoveX = x;
+        lastMoveY = y;
 
-    //         var dir = [xDelta, yDelta * -1, 0];
+        var dir = [xDelta, yDelta * -1, 0];
 
-    //         moveViewOriented(dir, frameTime * 2);
-    //     }
+        moveViewOriented(dir, frameTime * 2);
+    }
 
-    //     viewport.addEventListener("click", function (event) {
-    //         viewport.requestPointerLock();
-    //     }, false);
+    viewport.addEventListener("click", function (event) {
+        viewport.requestPointerLock();
+    }, false);
 
-    //     // Mouse handling code
-    //     // When the mouse is pressed it rotates the players view
-    //     viewport.addEventListener("mousedown", function (event) {
-    //         if (event.which == 1) {
-    //             startLook(event.pageX, event.pageY);
-    //         }
-    //     }, false);
-    //     viewport.addEventListener("mouseup", function (event) {
-    //         endLook();
-    //     }, false);
-    //     viewportFrame.addEventListener("mousemove", function (event) {
-    //         if (document.pointerLockElement) {
-    //             moveLookLocked(event.movementX, event.movementY);
-    //         } else {
-    //             moveLook(event.pageX, event.pageY);
-    //         }
-    //     }, false);
+    // Mouse handling code
+    // When the mouse is pressed it rotates the players view
+    viewport.addEventListener("mousedown", function (event) {
+        if (event.which == 1) {
+            startLook(event.pageX, event.pageY);
+        }
+    }, false);
+    viewport.addEventListener("mouseup", function (event) {
+        endLook();
+    }, false);
+    viewportFrame.addEventListener("mousemove", function (event) {
+        if (document.pointerLockElement) {
+            moveLookLocked(event.movementX, event.movementY);
+        } else {
+            moveLook(event.pageX, event.pageY);
+        }
+    }, false);
 
-    //     // Touch handling code
-    //     viewport.addEventListener('touchstart', function (event) {
-    //         var touches = event.touches;
-    //         switch (touches.length) {
-    //             case 1: // Single finger looks around
-    //                 startLook(touches[0].pageX, touches[0].pageY);
-    //                 break;
-    //             case 2: // Two fingers moves
-    //                 startMove(touches[0].pageX, touches[0].pageY);
-    //                 break;
-    //             case 3: // Three finger tap jumps
-    //                 playerMover.jump();
-    //                 break;
-    //             default:
-    //                 return;
-    //         }
-    //         event.stopPropagation();
-    //         event.preventDefault();
-    //     }, false);
-    //     viewport.addEventListener('touchend', function (event) {
-    //         endLook();
-    //         return false;
-    //     }, false);
-    //     viewport.addEventListener('touchmove', function (event) {
-    //         var touches = event.touches;
-    //         switch (touches.length) {
-    //             case 1:
-    //                 moveLook(touches[0].pageX, touches[0].pageY);
-    //                 break;
-    //             case 2:
-    //                 moveUpdate(touches[0].pageX, touches[0].pageY, 16);
-    //                 break;
-    //             default:
-    //                 return;
-    //         }
-    //         event.stopPropagation();
-    //         event.preventDefault();
-    //     }, false);
+    // Touch handling code
+    viewport.addEventListener('touchstart', function (event) {
+        var touches = event.touches;
+        switch (touches.length) {
+            case 1: // Single finger looks around
+                startLook(touches[0].pageX, touches[0].pageY);
+                break;
+            case 2: // Two fingers moves
+                startMove(touches[0].pageX, touches[0].pageY);
+                break;
+            case 3: // Three finger tap jumps
+                playerMover.jump();
+                break;
+            default:
+                return;
+        }
+        event.stopPropagation();
+        event.preventDefault();
+    }, false);
+    viewport.addEventListener('touchend', function (event) {
+        endLook();
+        return false;
+    }, false);
+    viewport.addEventListener('touchmove', function (event) {
+        var touches = event.touches;
+        switch (touches.length) {
+            case 1:
+                moveLook(touches[0].pageX, touches[0].pageY);
+                break;
+            case 2:
+                moveUpdate(touches[0].pageX, touches[0].pageY, 16);
+                break;
+            default:
+                return;
+        }
+        event.stopPropagation();
+        event.preventDefault();
+    }, false);
 }
 
 // // Utility function that tests a list of webgl contexts and returns when one can be created
 // // Hopefully this future-proofs us a bit
 function getAvailableContext(canvas, contextList) {
-    //     if (canvas.getContext) {
-    //         for (var i = 0; i < contextList.length; ++i) {
-    //             try {
-    //                 var context = canvas.getContext(contextList[i], { antialias: false });
-    //                 if (context !== null)
-    //                     return context;
-    //             } catch (ex) { }
-    //         }
-    //     }
+    if (canvas.getContext) {
+        for (var i = 0; i < contextList.length; ++i) {
+            try {
+                var context = canvas.getContext(contextList[i], { antialias: false });
+                if (context !== null)
+                    return context;
+            } catch (ex) { }
+        }
+    }
     return null;
 }
 
@@ -719,8 +720,16 @@ var Stats = function () {
         }
     }
 };
+"object" === typeof module && (module.exports = Stats);
 
 /// end of function test
+
+/// gl-matrix-min ///
+
+import * as glMatrixMin from "./util/gl-matrix-min.2.3.2"
+
+
+/// end of gl-matrix-min ///
 
 function main() {
     // var stats = new Stats();
@@ -797,9 +806,9 @@ function main() {
         }
     }
 
-    // if (navigator.getVRDisplays) {
-    //     navigator.getVRDisplays().then(EnumerateVRDisplays);
-    // }
+    if ((<any>navigator).getVRDisplays) {
+        (<any>navigator).getVRDisplays().then(EnumerateVRDisplays);
+    }
 
     /*var playMusic = document.getElementById("playMusic");
     playMusic.addEventListener("change", function() {
