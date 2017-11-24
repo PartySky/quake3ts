@@ -3,8 +3,6 @@ console.log(i);
 
 // import * as main2 from "./main";
 
-FunctionA
-
 import { FunctionA } from "./models/index";
 
 /*
@@ -118,7 +116,19 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE. */
 
+class FunctionB {
+    x1: any;
+    m: any;
+}
+function add(): FunctionB {
+    // return x + y;
+    return;
+}
+add().x1 = null;
+
+
 declare let define;
+declare let o;
 
 
 !function (t, a) {
@@ -182,7 +192,25 @@ declare let define;
         }
         , function (t, a, n) {
             var r = n(1)
-                , o = {};
+                , o = {
+                    create: null;
+                    clone: null;
+                    copy: null;
+                    identity: null;
+                    transpose: null;
+                    invert: null;
+                    adjoint: null;
+                    determinant: null;
+                    multiply: null;
+                    mul: null;
+                    rotate: null;
+                    scale: null;
+                    fromRotation: null;
+                    fromScaling: null;
+                    str: null;
+                    frob: null;
+                    LDU: null;
+                };
             o.create = function () {
                 var t = new r.ARRAY_TYPE(4);
                 return t[0] = 1,
@@ -340,7 +368,27 @@ declare let define;
         }
         , function (t, a, n) {
             var r = n(1)
-                , o = {};
+                , o = {
+                    create: null;
+                    clone: null;
+                    copy: null;
+                    identity: null;
+                    transpose: null;
+                    invert: null;
+                    adjoint: null;
+                    determinant: null;
+                    multiply: null;
+                    mul: null;
+                    rotate: null;
+                    scale: null;
+                    fromRotation: null;
+                    fromScaling: null;
+                    str: null;
+                    frob: null;
+                    LDU: null;
+                    translate: null;
+                    fromTranslation: null;
+                };
             o.create = function () {
                 var t = new r.ARRAY_TYPE(6);
                 return t[0] = 1,
@@ -526,7 +574,31 @@ declare let define;
         }
         , function (t, a, n) {
             var r = n(1)
-                , o = {};
+                , o = {
+                    create: null;
+                    clone: null;
+                    copy: null;
+                    identity: null;
+                    transpose: null;
+                    invert: null;
+                    adjoint: null;
+                    determinant: null;
+                    multiply: null;
+                    mul: null;
+                    rotate: null;
+                    scale: null;
+                    fromRotation: null;
+                    fromScaling: null;
+                    str: null;
+                    frob: null;
+                    LDU: null;
+                    translate: null;
+                    fromTranslation: null;
+                    fromMat4: null;
+                    fromMat2d: null;
+                    fromQuat: null;
+                    normalFromMat4: null;
+                };
             o.create = function () {
                 var t = new r.ARRAY_TYPE(9);
                 return t[0] = 1,
@@ -914,8 +986,41 @@ declare let define;
         , function (t, a, n) {
             var r = n(1)
                 , o = {
-                    scalar: {},
-                    SIMD: {}
+                    scalar: {
+                        transpose: null;
+                        adjoint: null;
+                        invert: null;
+                    },
+                    SIMD: {
+                        transpose: null;
+                        invert: null;
+                        adjoint: null;
+                        multiply: null;
+                    },
+
+                    create: null;
+                    clone: null;
+                    copy: null;
+                    identity: null;
+                    transpose: null;
+                    invert: null;
+                    adjoint: null;
+                    determinant: null;
+                    multiply: null;
+                    mul: null;
+                    rotate: null;
+                    scale: null;
+                    fromRotation: null;
+                    fromScaling: null;
+                    str: null;
+                    frob: null;
+                    LDU: null;
+                    translate: null;
+                    fromTranslation: null;
+                    fromMat4: null;
+                    fromMat2d: null;
+                    fromQuat: null;
+                    normalFromMat4: null;
                 };
             o.create = function () {
                 var t = new r.ARRAY_TYPE(16);
