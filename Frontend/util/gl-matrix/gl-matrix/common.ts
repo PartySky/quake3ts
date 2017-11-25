@@ -34,7 +34,7 @@ export const RANDOM = Math.random;
  * @param {Type} type Array type, such as Float32Array or Array
  */
 export function setMatrixArrayType(type) {
-  ARRAY_TYPE = type;
+    ARRAY_TYPE = type;
 }
 
 const degree = Math.PI / 180;
@@ -45,7 +45,7 @@ const degree = Math.PI / 180;
  * @param {Number} a Angle in Degrees
  */
 export function toRadian(a) {
-  return a * degree;
+    return a * degree;
 }
 
 /**
@@ -58,5 +58,5 @@ export function toRadian(a) {
  * @returns {Boolean} True if the numbers are approximately equal, false otherwise.
  */
 export function equals(a, b) {
-  return Math.abs(a - b) <= EPSILON*Math.max(1.0, Math.abs(a), Math.abs(b));
+    return Math.abs(a - b) <= EPSILON * Math.max(1.0, Math.abs(a), Math.abs(b));
 }

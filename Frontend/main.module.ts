@@ -3,8 +3,7 @@ console.log(startTest);
 
 import { exportTest } from "./export-test";
 exportTest();
-// import { exportTest2 } from "./util/gl-matrix/gl-matrix";
-// exportTest2();
+
 import {
     glMatrix,
     mat2,
@@ -19,12 +18,6 @@ import {
 
 import { q3bsp } from "./q3bsp";
 import { q3movement } from "./q3movement";
-
-
-
-// import * as main2 from "./main";
-
-import { FunctionA } from "./models/index";
 import { frob } from "./util/gl-matrix/gl-matrix/mat4";
 
 /*

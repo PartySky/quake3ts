@@ -99,8 +99,77 @@ export const q3bsp_model_fragment = '\
     } \n\
 ';
 
-export var q3glshader = {}
-    // var q3glshader = {}
+let myObj = {
+    myFunction: null
+}
+
+myObj.myFunction
+
+export var q3glshader = {
+    lightmap: null,
+    white: null,
+    defaultShader: null,
+    defaultTexture: null,
+    texMat: null,
+    defaultProgram: null,
+    modelProgram: null,
+
+
+    // replace null to function declarations
+
+    // tryed to typezate
+    createSolidTexture: null,
+    // createSolidTexture: function (gl: any, color: any) { 
+    //     let texture: any;
+    //     return texture;
+    // },
+
+    // tryed to typezate
+    init: null,
+    // init: function (gl: any, lightmap: any) { },
+
+    // tryed to typezate
+    // compileShaderProgram: function (gl: any, vertex: any, fragment: any) { },
+    compileShaderProgram: null,
+
+    // tryed to typezate
+    // buildDefault: function (gl: any) { },
+    buildDefault: null,
+
+    // tryed to typezate
+    // build: function (gl: any, shader: any) {
+    //     let glShader: any;
+    //     return glShader;
+    // },
+    build: null,
+
+    
+    // tryed to typezate
+    // translateCull: null,
+
+    translateCull: function (gl, cull:any) {
+        if (!cull) { return gl.FRONT; }
+        switch (cull.toLowerCase()) {
+            case 'disable':
+            case 'none':
+                return null;
+            case 'front':
+                return gl.BACK;
+            case 'back':
+            default:
+                return gl.FRONT;
+        };
+    },
+
+    translateBlend: null,
+    translateDepthFunc: null,
+    loadTexture: null,
+    loadShaderMaps: null,
+    loadTextureUrl: null,
+    setShader: null,
+    setShaderStage: null
+}
+// var q3glshader = {}
 
 q3glshader.lightmap = null;
 q3glshader.white = null;
@@ -167,7 +236,8 @@ q3glshader.buildDefault = function(gl, surface) {
         blendSrc: gl.ONE,
         blendDest: gl.ZERO,
         depthFunc: gl.LEQUAL,
-        depthWrite: true
+        depthWrite: true,
+        texture: null
     };
 
     if (surface) {
@@ -204,19 +274,20 @@ q3glshader.translateDepthFunc = function(gl, depth) {
     }
 };
 
-q3glshader.translateCull = function(gl, cull) {
-    if (!cull) { return gl.FRONT; }
-    switch (cull.toLowerCase()) {
-        case 'disable':
-        case 'none':
-            return null;
-        case 'front':
-            return gl.BACK;
-        case 'back':
-        default:
-            return gl.FRONT;
-    }
-};
+// tryed to typezate
+// q3glshader.translateCull = function(gl, cull) {
+//     if (!cull) { return gl.FRONT; }
+//     switch (cull.toLowerCase()) {
+//         case 'disable':
+//         case 'none':
+//             return null;
+//         case 'front':
+//             return gl.BACK;
+//         case 'back':
+//         default:
+//             return gl.FRONT;
+//     }
+// };
 
 q3glshader.translateBlend = function(gl, blend) {
     if (!blend) { return gl.ONE; }
