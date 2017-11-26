@@ -12,6 +12,7 @@
     "dependencies": {},
     "devDependencies": {
         "@types/node": "^8.0.33",
+        "file-loader": "^1.1.5",
         "html-loader": "^0.5.1",
         "ts-loader": "^2.3.7",
         "typescript": "^2.5.3",

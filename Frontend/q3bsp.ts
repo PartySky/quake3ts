@@ -38,6 +38,9 @@ import {
 } from "./util/gl-matrix/gl-matrix";
 import { q3glshader } from "./q3glshader";
 import { q3shader } from "./q3shader";
+// import * as Worker from "./q3bsp_worker";
+// import { q3bspObj } from "./ex-worker";
+import * as myWorker from "./ex-worker";
 
 
 // Constants
@@ -51,6 +54,9 @@ export const q3bsp_base_folder = 'demo_baseq3';
  */
 
 export function q3bsp(gl) {
+    // testField: function() { };
+    // var testField = null; 
+
     // q3bsp = function(gl) {
     // gl initialization
     this.gl = gl;
@@ -63,7 +69,69 @@ export function q3bsp(gl) {
     this.showLoadStatus();
 
     // Spawn the web worker
-    this.worker = new Worker('js/q3bsp_worker.js');
+    // this.worker = new Worker('js/q3bsp_worker.js');
+    // this.worker = new Worker('./q3bsp_worker');
+
+    // HOTFIX added Worker object like function
+    // let worker = {
+    //     // function onmessage(msg) { }
+    //     onmessage: null
+    // };
+    // this.worker = worker;
+    // this.worker = new Worker('js/q3bsp_worker.js');
+    this.worker = new Worker('js/test_worker.js');
+
+    // let qwe = new Worker(null);
+    this.workerTest = {
+        onmessageTest: function (x: any, y: any) {
+            console.log(x, y);
+         },
+    };
+
+    this.workerTest.onmessageTest('test ', ' custom function 1');
+
+    this.workerTest.onmessageTest2 = function (msg) { 
+        console.log(msg);
+    };
+
+    this.workerTest.onmessageTest2('test custom function 2');
+
+    // postMessage test
+    this.worker.postMessage({
+        type: 'test',
+        url: 'use postMessage'
+    });
+
+    // moved from worker
+    // onmessage = function (msg) {
+    // let exWorkerOnmessage = function (msg) {
+    //     switch (msg.data.type) {
+    //         case 'load':
+    //             q3bspObj.load(msg.data.url, msg.data.tesselationLevel, function () {
+    //                 // Fallback to account for Opera handling URLs in a worker 
+    //                 // differently than other browsers. 
+    //                 q3bspObj.load("../" + msg.data.url, msg.data.tesselationLevel);
+    //             });
+    //             break;
+    //         case 'loadShaders':
+    //             q3shader.loadList(msg.data.sources);
+    //             break;
+    //         case 'trace':
+    //             q3bspObj.trace(msg.data.traceId, msg.data.start, msg.data.end, msg.data.radius, msg.data.slide);
+    //             break;
+    //         case 'visibility':
+    //             q3bspObj.buildVisibleList(q3bspObj.getLeaf(msg.data.pos));
+    //             break;
+    //         default:
+    //             throw 'Unexpected message type: ' + msg.data;
+    //     }
+    // };
+    
+
+    // end of moved from worker
+
+
+
     this.worker.onmessage = function(msg) {
         map.onMessage(msg);
     };
@@ -115,35 +183,45 @@ q3bsp.prototype.playMusic = function(play) {
     }
 };
 
-q3bsp.prototype.onMessage = function(msg) {
+export function onMessage(msg) {
+// q3bsp.prototype.onMessage = function (msg) {
+    console.log('what is it protorype?');
     switch (msg.data.type) {
         case 'entities':
             this.entities = msg.data.entities;
-            this.processEntities(this.entities);
+            processEntities(this.entities);
+            // this.processEntities(this.entities);
             break;
         case 'geometry':
-            this.buildBuffers(msg.data.vertices, msg.data.indices);
+            buildBuffers(msg.data.vertices, msg.data.indices);
+            // this.buildBuffers(msg.data.vertices, msg.data.indices);
             this.surfaces = msg.data.surfaces;
-            this.bindShaders();
+            bindShaders();
+            // this.bindShaders();
             break;
         case 'lightmap':
-            this.buildLightmaps(msg.data.size, msg.data.lightmaps);
+            buildLightmaps(msg.data.size, msg.data.lightmaps);
+            // this.buildLightmaps(msg.data.size, msg.data.lightmaps);
             break;
         case 'shaders':
-            this.buildShaders(msg.data.shaders);
+            buildShaders(msg.data.shaders);
+            // this.buildShaders(msg.data.shaders);
             break;
         case 'bsp':
             this.bspTree = new q3bsptree(msg.data.bsp);
             if (this.onbsp) {
                 this.onbsp(this.bspTree);
             }
-            this.clearLoadStatus();
+            clearLoadStatus();
+            // this.clearLoadStatus();
             break;
         case 'visibility':
-            this.setVisibility(msg.data.visibleSurfaces);
+            setVisibility(msg.data.visibleSurfaces);
+            // this.setVisibility(msg.data.visibleSurfaces);
             break;
         case 'status':
-            this.onLoadStatus(msg.data.message);
+            onLoadStatus(msg.data.message);
+            // this.onLoadStatus(msg.data.message);
             break;
         default:
             throw 'Unexpected message type: ' + msg.data.type;
@@ -156,13 +234,15 @@ q3bsp.prototype.showLoadStatus = function() {
     loading.style.display = 'block';
 };
 
-q3bsp.prototype.onLoadStatus = function(message) {
+export function onLoadStatus (message) {
+// q3bsp.prototype.onLoadStatus = function(message) {
     // Yeah, this shouldn't be hardcoded in here
     var loading = document.getElementById('loading');
     loading.innerHTML = message;
 };
 
-q3bsp.prototype.clearLoadStatus = function() {
+export function clearLoadStatus() {
+// q3bsp.prototype.clearLoadStatus = function() {
     // Yeah, this shouldn't be hardcoded in here
     var loading = document.getElementById('loading');
     loading.style.display = 'none';
@@ -177,6 +257,16 @@ q3bsp.prototype.load = function(url, tesselationLevel) {
         url: '../' + q3bsp_base_folder + '/' + url,
         tesselationLevel: tesselationLevel
     });
+    // start dub call to exWorker
+    let msg = {
+        data: {
+            type: 'load',
+            url: '../' + q3bsp_base_folder + '/' + url,
+            tesselationLevel: tesselationLevel
+        },
+    };
+    myWorker.onmessage(msg);
+    // end dub call to exWorker
 };
 
 q3bsp.prototype.loadShaders = function(sources) {
@@ -187,11 +277,13 @@ q3bsp.prototype.loadShaders = function(sources) {
     }
 
     q3shader.loadList(sources, function(shaders) {
-        map.buildShaders(shaders);
+        buildShaders(shaders);
+        // map.buildShaders(shaders);
     });
 };
 
-q3bsp.prototype.processEntities = function(entities) {
+export function processEntities(entities) {
+// q3bsp.prototype.processEntities = function(entities) {
     if (this.onentitiesloaded) {
         this.onentitiesloaded(entities);
     }
@@ -226,7 +318,8 @@ function q3bspCreateSpeaker(speaker) {
     speaker.audio.play();
 };
 
-q3bsp.prototype.buildBuffers = function(vertices, indices) {
+export function buildBuffers(vertices, indices) {
+// q3bsp.prototype.buildBuffers = function(vertices, indices) {
     var gl = this.gl;
 
     this.vertexBuffer = gl.createBuffer();
@@ -287,7 +380,8 @@ q3bsp.prototype.buildBuffers = function(vertices, indices) {
     this.skyboxIndexCount = skyIndices.length;
 };
 
-q3bsp.prototype.buildLightmaps = function(size, lightmaps) {
+export function buildLightmaps(size, lightmaps) {
+// q3bsp.prototype.buildLightmaps = function(size, lightmaps) {
     var gl = this.gl;
 
     gl.bindTexture(gl.TEXTURE_2D, this.lightmap);
@@ -307,9 +401,10 @@ q3bsp.prototype.buildLightmaps = function(size, lightmaps) {
     q3glshader.init(gl, this.lightmap);
 };
 
-q3bsp.prototype.buildShaders = function(shaders) {
+export function buildShaders(shaders) {
+// q3bsp.prototype.buildShaders = function(shaders) {
     var gl = this.gl;
-
+    
     for (var i = 0; i < shaders.length; ++i) {
         var shader = shaders[i];
         var glShader = q3glshader.build(gl, shader);
@@ -317,7 +412,8 @@ q3bsp.prototype.buildShaders = function(shaders) {
     }
 };
 
-q3bsp.prototype.bindShaders = function() {
+export function bindShaders() {
+// q3bsp.prototype.bindShaders = function() {
     if (!this.surfaces) { return; }
 
     if (this.onsurfaces) {
@@ -375,9 +471,19 @@ q3bsp.prototype.updateVisibility = function(pos) {
         type: 'visibility',
         pos: pos
     });
+    // start dub call to exWorker
+    let msg = {
+        data: {
+            type: 'visibility',
+            pos: pos
+        },
+    };
+    myWorker.onmessage(msg);
+    // end dub call to exWorker
 };
 
-q3bsp.prototype.setVisibility = function(visibilityList) {
+export function setVisibility(visibilityList) {
+// q3bsp.prototype.setVisibility = function(visibilityList) {
     if (this.surfaces.length > 0) {
         for (var i = 0; i < this.surfaces.length; ++i) {
             this.surfaces[i].visible = (visibilityList[i] === true);
