@@ -34,7 +34,15 @@
 import { q3shader } from "./q3shader";
 import { vec3 } from "./util/gl-matrix/gl-matrix";
 import { BinaryFile } from "./util/binary-file";
-import { q3bsp, onMessage } from "./q3bsp";
+import {
+    q3bsp,
+    onMessage,
+    LearnPrototype,
+    instance1
+} from "./q3bsp";
+
+// console.log('Calling imported instance method test');
+// instance1.greet();
 
 // trying to send it to q3bspObj like a function
 export function onmessage(msg) {
@@ -117,6 +125,10 @@ q3bspObj.load = function(url, tesselationLevel, errorCallback) {
 
 // Parses the BSP file
 q3bspObj.parse = function (src, tesselationLevel) {
+    console.log('Calling imported instance method test');
+    instance1.greet();
+
+
     // HOTFIX make direct call to q3bsp's function
     // postMessage({
     //     type: 'status',
@@ -152,7 +164,6 @@ q3bspObj.parse = function (src, tesselationLevel) {
         };
         onMessage(msg);        
         // end dub call to q3bsp's function
-
         return;
     }
 

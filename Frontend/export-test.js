@@ -1,5 +1,5 @@
 function exportTest() {
-    console.log('Eport function test');
+    console.log('Export function test');
 }
 
 exports.exportTest = exportTest;

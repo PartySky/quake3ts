@@ -41,6 +41,7 @@ import { q3shader } from "./q3shader";
 // import * as Worker from "./q3bsp_worker";
 // import { q3bspObj } from "./ex-worker";
 import * as myWorker from "./ex-worker";
+import { LDU } from "./util/gl-matrix/gl-matrix/mat2";
 
 
 // Constants
@@ -52,6 +53,19 @@ export const q3bsp_base_folder = 'demo_baseq3';
 /*
  * q3bsp
  */
+
+// Learn Prototype
+export function LearnPrototype(name) { 
+    this.name = name;
+}
+
+LearnPrototype.prototype.greet = function () {
+    console.log('Hello! ' + 'my name is ' + this.name);
+}
+
+export let instance1 = new LearnPrototype('First Instance');
+console.log(instance1.name)
+instance1.greet();
 
 export function q3bsp(gl) {
     // testField: function() { };
