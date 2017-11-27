@@ -36,20 +36,21 @@ import { vec3 } from "./util/gl-matrix/gl-matrix";
 import { BinaryFile } from "./util/binary-file";
 import {
     q3bsp,
-    onMessage,
+    // onMessage,
     LearnPrototype,
     instance1
 } from "./q3bsp";
+import { inspect } from "util";
 
 // console.log('Calling imported instance method test');
 // instance1.greet();
 
 // trying to send it to q3bspObj like a function
 export function onmessage(msg) {
-// onmessage = function(msg) {
+    // onmessage = function(msg) {
     switch (msg.data.type) {
         case 'load':
-            q3bspObj.load(msg.data.url, msg.data.tesselationLevel, function() {
+            q3bspObj.load(msg.data.url, msg.data.tesselationLevel, function () {
                 // Fallback to account for Opera handling URLs in a worker 
                 // differently than other browsers. 
                 q3bspObj.load("../" + msg.data.url, msg.data.tesselationLevel);
@@ -110,10 +111,10 @@ export var q3bspObj = {
     buildVisibleList: null
 };
 
-q3bspObj.load = function(url, tesselationLevel, errorCallback) {
+q3bspObj.load = function (url, tesselationLevel, errorCallback) {
     var request = new XMLHttpRequest();
 
-    request.addEventListener("load", function() {
+    request.addEventListener("load", function () {
         q3bspObj.parse(new BinaryFile(request.responseText), tesselationLevel);
     }, false);
 
@@ -126,6 +127,7 @@ q3bspObj.load = function(url, tesselationLevel, errorCallback) {
 // Parses the BSP file
 q3bspObj.parse = function (src, tesselationLevel) {
     console.log('Calling imported instance method test');
+    instance1.greet();
     instance1.greet();
 
 
@@ -142,7 +144,10 @@ q3bspObj.parse = function (src, tesselationLevel) {
             message: 'Map downloaded, parsing level geometry...'
         },
     };
-    onMessage(msg);
+    // q3bsp.Test();
+    // q3bsp.onMessage();
+    q3bsp.test3();
+    // onMessage(msg);
     // end dub call to q3bsp's function
 
     var header = q3bspObj.readHeader(src);
@@ -162,7 +167,7 @@ q3bspObj.parse = function (src, tesselationLevel) {
                 message: 'Incompatible BSP version.'
             },
         };
-        onMessage(msg);        
+        onMessage(msg);
         // end dub call to q3bsp's function
         return;
     }
@@ -247,7 +252,7 @@ q3bspObj.parse = function (src, tesselationLevel) {
 };
 
 // Read all lump headers
-q3bspObj.readHeader = function(src) {
+q3bspObj.readHeader = function (src) {
     // Read the magic number and the version
     var header = {
         tag: src.readString(4),
@@ -268,7 +273,7 @@ q3bspObj.readHeader = function(src) {
 };
 
 // Read all entity structures
-q3bspObj.readEntities = function(lump, src) {
+q3bspObj.readEntities = function (lump, src) {
     src.seek(lump.offset);
     var entities = src.readString(lump.length);
 
@@ -276,14 +281,14 @@ q3bspObj.readEntities = function(lump, src) {
         targets: {}
     };
 
-    entities.replace(/\{([^}]*)\}/mg, function($0, entitySrc) {
+    entities.replace(/\{([^}]*)\}/mg, function ($0, entitySrc) {
         var entity = {
             classname: 'unknown'
         };
-        entitySrc.replace(/"(.+)" "(.+)"$/mg, function($0, key, value) {
+        entitySrc.replace(/"(.+)" "(.+)"$/mg, function ($0, key, value) {
             switch (key) {
                 case 'origin':
-                    value.replace(/(.+) (.+) (.+)/, function($0, x, y, z) {
+                    value.replace(/(.+) (.+) (.+)/, function ($0, x, y, z) {
                         entity[key] = [
                             parseFloat(x),
                             parseFloat(y),
@@ -327,7 +332,7 @@ q3bspObj.readEntities = function(lump, src) {
 };
 
 // Read all shader structures
-q3bspObj.readShaders = function(lump, src) {
+q3bspObj.readShaders = function (lump, src) {
     var count = lump.length / 72;
     var elements = [];
 
@@ -351,7 +356,7 @@ q3bspObj.readShaders = function(lump, src) {
 };
 
 // Scale up an RGB color
-q3bspObj.brightnessAdjust = function(color, factor) {
+q3bspObj.brightnessAdjust = function (color, factor) {
     var scale = 1.0,
         temp = 0.0;
 
@@ -370,7 +375,7 @@ q3bspObj.brightnessAdjust = function(color, factor) {
     return color;
 };
 
-q3bspObj.brightnessAdjustVertex = function(color, factor) {
+q3bspObj.brightnessAdjustVertex = function (color, factor) {
     var scale = 1.0,
         temp = 0.0;
 
@@ -390,7 +395,7 @@ q3bspObj.brightnessAdjustVertex = function(color, factor) {
 };
 
 // Read all lightmaps
-q3bspObj.readLightmaps = function(lump, src) {
+q3bspObj.readLightmaps = function (lump, src) {
     var lightmapSize = 128 * 128;
     var count = lump.length / (lightmapSize * 3);
 
@@ -470,7 +475,7 @@ q3bspObj.readLightmaps = function(lump, src) {
     return lightmapRects;
 };
 
-q3bspObj.readVerts = function(lump, src) {
+q3bspObj.readVerts = function (lump, src) {
     var count = lump.length / 44;
     var elements = [];
 
@@ -489,7 +494,7 @@ q3bspObj.readVerts = function(lump, src) {
     return elements;
 };
 
-q3bspObj.readMeshVerts = function(lump, src) {
+q3bspObj.readMeshVerts = function (lump, src) {
     var count = lump.length / 4;
     var meshVerts = [];
 
@@ -502,7 +507,7 @@ q3bspObj.readMeshVerts = function(lump, src) {
 };
 
 // Read all face structures
-q3bspObj.readFaces = function(lump, src) {
+q3bspObj.readFaces = function (lump, src) {
     var faceCount = lump.length / 104;
     var faces = [];
 
@@ -536,7 +541,7 @@ q3bspObj.readFaces = function(lump, src) {
 };
 
 // Read all Plane structures
-q3bspObj.readPlanes = function(lump, src) {
+q3bspObj.readPlanes = function (lump, src) {
     var count = lump.length / 16;
     var elements = [];
 
@@ -552,7 +557,7 @@ q3bspObj.readPlanes = function(lump, src) {
 };
 
 // Read all Node structures
-q3bspObj.readNodes = function(lump, src) {
+q3bspObj.readNodes = function (lump, src) {
     var count = lump.length / 36;
     var elements = [];
 
@@ -570,7 +575,7 @@ q3bspObj.readNodes = function(lump, src) {
 };
 
 // Read all Leaf structures
-q3bspObj.readLeaves = function(lump, src) {
+q3bspObj.readLeaves = function (lump, src) {
     var count = lump.length / 48;
     var elements = [];
 
@@ -592,7 +597,7 @@ q3bspObj.readLeaves = function(lump, src) {
 };
 
 // Read all Leaf Faces
-q3bspObj.readLeafFaces = function(lump, src) {
+q3bspObj.readLeafFaces = function (lump, src) {
     var count = lump.length / 4;
     var elements = [];
 
@@ -605,7 +610,7 @@ q3bspObj.readLeafFaces = function(lump, src) {
 };
 
 // Read all Brushes
-q3bspObj.readBrushes = function(lump, src) {
+q3bspObj.readBrushes = function (lump, src) {
     var count = lump.length / 12;
     var elements = [];
 
@@ -622,7 +627,7 @@ q3bspObj.readBrushes = function(lump, src) {
 };
 
 // Read all Leaf Brushes
-q3bspObj.readLeafBrushes = function(lump, src) {
+q3bspObj.readLeafBrushes = function (lump, src) {
     var count = lump.length / 4;
     var elements = [];
 
@@ -635,7 +640,7 @@ q3bspObj.readLeafBrushes = function(lump, src) {
 };
 
 // Read all Brush Sides
-q3bspObj.readBrushSides = function(lump, src) {
+q3bspObj.readBrushSides = function (lump, src) {
     var count = lump.length / 8;
     var elements = [];
 
@@ -651,7 +656,7 @@ q3bspObj.readBrushSides = function(lump, src) {
 };
 
 // Read all Vis Data
-q3bspObj.readVisData = function(lump, src) {
+q3bspObj.readVisData = function (lump, src) {
     src.seek(lump.offset);
     var vecCount = src.readLong();
     var size = src.readLong();
@@ -669,7 +674,7 @@ q3bspObj.readVisData = function(lump, src) {
     };
 };
 
-q3bspObj.colorToVec = function(color) {
+q3bspObj.colorToVec = function (color) {
     return [
         (color & 0xFF) / 0xFF,
         ((color & 0xFF00) >> 8) / 0xFF,
@@ -683,7 +688,7 @@ q3bspObj.colorToVec = function(color) {
 // Compile the map into a stream of WebGL-compatible data
 //
 
-q3bspObj.compileMap = function(verts, faces, meshVerts, lightmaps, shaders, tesselationLevel) {
+q3bspObj.compileMap = function (verts, faces, meshVerts, lightmaps, shaders, tesselationLevel) {
     // HOTFIX make direct call to q3bsp's function
     // postMessage({
     //     type: 'status',
@@ -825,7 +830,7 @@ q3bspObj.compileMap = function(verts, faces, meshVerts, lightmaps, shaders, tess
 // Curve Tesselation
 //
 
-q3bspObj.getCurvePoint3 = function(c0, c1, c2, dist) {
+q3bspObj.getCurvePoint3 = function (c0, c1, c2, dist) {
     var a, b = 1.0 - dist;
 
     return vec3.add(
@@ -840,7 +845,7 @@ q3bspObj.getCurvePoint3 = function(c0, c1, c2, dist) {
 };
 
 // This is kinda ugly. Clean it up at some point?
-q3bspObj.getCurvePoint2 = function(c0, c1, c2, dist) {
+q3bspObj.getCurvePoint2 = function (c0, c1, c2, dist) {
     var a, b = 1.0 - dist;
 
     let c30 = [c0[0], c0[1], 0];
@@ -860,7 +865,7 @@ q3bspObj.getCurvePoint2 = function(c0, c1, c2, dist) {
     return [res[0], res[1]];
 };
 
-q3bspObj.tesselate = function(face, verts, meshVerts, level) {
+q3bspObj.tesselate = function (face, verts, meshVerts, level) {
     var off = face.vertex;
     var count = face.vertCount;
 
@@ -976,7 +981,7 @@ q3bspObj.tesselate = function(face, verts, meshVerts, level) {
 // BSP Collision Detection
 //
 
-q3bspObj.trace = function(traceId, start, end, radius, slide) {
+q3bspObj.trace = function (traceId, start, end, radius, slide) {
     if (!radius) { radius = 0; }
     if (!slide) { slide = false; }
 
@@ -1022,7 +1027,7 @@ q3bspObj.trace = function(traceId, start, end, radius, slide) {
     // end dub call to q3bsp's function
 };
 
-q3bspObj.traceNode = function(nodeIdx, startFraction, endFraction, start, end, radius, output) {
+q3bspObj.traceNode = function (nodeIdx, startFraction, endFraction, start, end, radius, output) {
     if (nodeIdx < 0) { // Leaf node?
         var leaf = leaves[-(nodeIdx + 1)];
         for (var i = 0; i < leaf.leafBrushCount; i++) {
@@ -1090,7 +1095,7 @@ q3bspObj.traceNode = function(nodeIdx, startFraction, endFraction, start, end, r
     }
 };
 
-q3bspObj.traceBrush = function(brush, start, end, radius, output) {
+q3bspObj.traceBrush = function (brush, start, end, radius, output) {
     var startFraction = -1;
     var endFraction = 1;
     var startsOut = false;
@@ -1149,7 +1154,7 @@ q3bspObj.traceBrush = function(brush, start, end, radius, output) {
 
 var lastLeaf = -1;
 
-q3bspObj.checkVis = function(visCluster, testCluster: any) {
+q3bspObj.checkVis = function (visCluster, testCluster: any) {
     if (visCluster == testCluster || visCluster == -1) { return true; }
     var i = (visCluster * visSize) + (testCluster >> 3);
     var visSet = visBuffer[i];
@@ -1158,7 +1163,7 @@ q3bspObj.checkVis = function(visCluster, testCluster: any) {
     return (visSet & (1 << (testCluster & 7)));
 };
 
-q3bspObj.getLeaf = function(pos) {
+q3bspObj.getLeaf = function (pos) {
     var index = 0;
 
     var node = null;
@@ -1180,7 +1185,7 @@ q3bspObj.getLeaf = function(pos) {
     return -(index + 1);
 };
 
-q3bspObj.buildVisibleList = function(leafIndex) {
+q3bspObj.buildVisibleList = function (leafIndex) {
     // Determine visible faces
     if (leafIndex == lastLeaf) { return; }
     lastLeaf = leafIndex;
@@ -1191,11 +1196,11 @@ q3bspObj.buildVisibleList = function(leafIndex) {
 
     for (var i = 0; i < leaves.length; ++i) {
         let leaf = {
-                cluster: null,
-                leafFaceCount: null,
-                leafFace: null
-            }
-            // var leaf = leaves[i];
+            cluster: null,
+            leafFaceCount: null,
+            leafFace: null
+        }
+        // var leaf = leaves[i];
         if (q3bspObj.checkVis(curLeaf.cluster, leaf.cluster)) {
             for (var j = 0; j < leaf.leafFaceCount; ++j) {
                 // var face = faces[leafFaces[[j + leaf.leafFace]]];

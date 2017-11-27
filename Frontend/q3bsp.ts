@@ -55,18 +55,21 @@ export const q3bsp_base_folder = 'demo_baseq3';
  */
 
 // Learn Prototype
-export function LearnPrototype(name) { 
+export function LearnPrototype(name) {
     this.name = name;
 }
 
 LearnPrototype.prototype.greet = function () {
-    console.log('Hello! ' + 'my name is ' + this.name);
+    console.log('Hello! my name is ' + this.name);
 }
 
 export let instance1 = new LearnPrototype('First Instance');
 console.log(instance1.name)
 instance1.greet();
 
+export function q3bspPrototype(gl) { }
+
+export let q3bsp1 = new q3bspPrototype(gl);
 export function q3bsp(gl) {
     // testField: function() { };
     // var testField = null; 
@@ -76,9 +79,9 @@ export function q3bsp(gl) {
     this.gl = gl;
     this.onload = null;
     this.onbsp = null;
-    this.onentitiesloaded = null;
+    this.onentitiesloaded = null; // публичные поля
 
-    var map = this;
+    var map = this; // в ts сделать private поле _map 
 
     this.showLoadStatus();
 
@@ -99,12 +102,12 @@ export function q3bsp(gl) {
     this.workerTest = {
         onmessageTest: function (x: any, y: any) {
             console.log(x, y);
-         },
+        },
     };
 
     this.workerTest.onmessageTest('test ', ' custom function 1');
 
-    this.workerTest.onmessageTest2 = function (msg) { 
+    this.workerTest.onmessageTest2 = function (msg) {
         console.log(msg);
     };
 
@@ -140,16 +143,16 @@ export function q3bsp(gl) {
     //             throw 'Unexpected message type: ' + msg.data;
     //     }
     // };
-    
+
 
     // end of moved from worker
 
 
 
-    this.worker.onmessage = function(msg) {
+    this.worker.onmessage = function (msg) {
         map.onMessage(msg);
     };
-    this.worker.onerror = function(msg) {
+    this.worker.onerror = function (msg) {
         console.error('Line: ' + msg.lineno + ', ' + msg.message);
     };
 
@@ -183,11 +186,15 @@ export function q3bsp(gl) {
     this.bgMusic = null;
 };
 
-q3bsp.prototype.highlightShader = function(name) {
+q3bsp.prototype.test3 = function (name) {
+    console.log('f(x) q3bsp prototype field test');
+};
+
+q3bsp.prototype.highlightShader = function (name) {
     this.highlighted = name;
 };
 
-q3bsp.prototype.playMusic = function(play) {
+q3bsp.prototype.playMusic = function (play) {
     if (!this.bgMusic) { return; }
 
     if (play) {
@@ -197,14 +204,14 @@ q3bsp.prototype.playMusic = function(play) {
     }
 };
 
-export function onMessage(msg) {
-// q3bsp.prototype.onMessage = function (msg) {
+// export function onMessage(msg) {
+q3bsp.prototype.onMessage = function (msg) {
     console.log('what is it protorype?');
     switch (msg.data.type) {
         case 'entities':
             this.entities = msg.data.entities;
-            processEntities(this.entities);
-            // this.processEntities(this.entities);
+            // processEntities(this.entities);
+            this.processEntities(this.entities);
             break;
         case 'geometry':
             buildBuffers(msg.data.vertices, msg.data.indices);
@@ -226,43 +233,43 @@ export function onMessage(msg) {
             if (this.onbsp) {
                 this.onbsp(this.bspTree);
             }
-            clearLoadStatus();
+            // clearLoadStatus();
             // this.clearLoadStatus();
             break;
         case 'visibility':
-            setVisibility(msg.data.visibleSurfaces);
-            // this.setVisibility(msg.data.visibleSurfaces);
+            // setVisibility(msg.data.visibleSurfaces);
+            this.setVisibility(msg.data.visibleSurfaces);
             break;
         case 'status':
-            onLoadStatus(msg.data.message);
-            // this.onLoadStatus(msg.data.message);
+            // onLoadStatus(msg.data.message);
+            this.onLoadStatus(msg.data.message);
             break;
         default:
             throw 'Unexpected message type: ' + msg.data.type;
     }
 };
 
-q3bsp.prototype.showLoadStatus = function() {
+q3bsp.prototype.showLoadStatus = function () {
     // Yeah, this shouldn't be hardcoded in here
     var loading = document.getElementById('loading');
     loading.style.display = 'block';
 };
 
-export function onLoadStatus (message) {
-// q3bsp.prototype.onLoadStatus = function(message) {
+// export function onLoadStatus(message) {
+q3bsp.prototype.onLoadStatus = function (message) {
     // Yeah, this shouldn't be hardcoded in here
     var loading = document.getElementById('loading');
     loading.innerHTML = message;
 };
 
-export function clearLoadStatus() {
-// q3bsp.prototype.clearLoadStatus = function() {
+// export function clearLoadStatus() {
+q3bsp.prototype.clearLoadStatus = function () {
     // Yeah, this shouldn't be hardcoded in here
     var loading = document.getElementById('loading');
     loading.style.display = 'none';
 };
 
-q3bsp.prototype.load = function(url, tesselationLevel) {
+q3bsp.prototype.load = function (url, tesselationLevel) {
     if (!tesselationLevel) {
         tesselationLevel = 5;
     }
@@ -283,21 +290,21 @@ q3bsp.prototype.load = function(url, tesselationLevel) {
     // end dub call to exWorker
 };
 
-q3bsp.prototype.loadShaders = function(sources) {
+q3bsp.prototype.loadShaders = function (sources) {
     var map = this;
 
     for (var i = 0; i < sources.length; ++i) {
         sources[i] = q3bsp_base_folder + '/' + sources[i];
     }
 
-    q3shader.loadList(sources, function(shaders) {
+    q3shader.loadList(sources, function (shaders) {
         buildShaders(shaders);
         // map.buildShaders(shaders);
     });
 };
 
-export function processEntities(entities) {
-// q3bsp.prototype.processEntities = function(entities) {
+// export function processEntities(entities) {
+q3bsp.prototype.processEntities = function (entities) {
     if (this.onentitiesloaded) {
         this.onentitiesloaded(entities);
     }
@@ -326,14 +333,14 @@ function q3bspCreateSpeaker(speaker) {
     speaker.audio = new Audio(q3bsp_base_folder + '/' + speaker.noise.replace('.wav', '.ogg'));
 
     // TODO: When can we change this to simply setting the 'loop' property?
-    speaker.audio.addEventListener('ended', function() {
+    speaker.audio.addEventListener('ended', function () {
         this.currentTime = 0;
     }, false);
     speaker.audio.play();
 };
 
 export function buildBuffers(vertices, indices) {
-// q3bsp.prototype.buildBuffers = function(vertices, indices) {
+    // q3bsp.prototype.buildBuffers = function(vertices, indices) {
     var gl = this.gl;
 
     this.vertexBuffer = gl.createBuffer();
@@ -350,11 +357,11 @@ export function buildBuffers(vertices, indices) {
         128, 128, 128, 1, 0, -128, -128, 128, 0, 1,
         128, -128, 128, 1, 1,
 
-        -128, 128, 128, 0, 1,
+    -128, 128, 128, 0, 1,
         128, 128, 128, 1, 1, -128, 128, -128, 0, 0,
         128, 128, -128, 1, 0,
 
-        -128, -128, 128, 0, 0,
+    -128, -128, 128, 0, 0,
         128, -128, 128, 1, 0, -128, -128, -128, 0, 1,
         128, -128, -128, 1, 1,
 
@@ -363,7 +370,7 @@ export function buildBuffers(vertices, indices) {
         128, 128, -128, 1, 0,
         128, -128, -128, 1, 1,
 
-        -128, 128, 128, 1, 0, -128, -128, 128, 1, 1, -128, 128, -128, 0, 0, -128, -128, -128, 0, 1
+    -128, 128, 128, 1, 0, -128, -128, 128, 1, 1, -128, 128, -128, 0, 0, -128, -128, -128, 0, 1
     ];
 
     var skyIndices = [
@@ -395,7 +402,7 @@ export function buildBuffers(vertices, indices) {
 };
 
 export function buildLightmaps(size, lightmaps) {
-// q3bsp.prototype.buildLightmaps = function(size, lightmaps) {
+    // q3bsp.prototype.buildLightmaps = function(size, lightmaps) {
     var gl = this.gl;
 
     gl.bindTexture(gl.TEXTURE_2D, this.lightmap);
@@ -416,9 +423,9 @@ export function buildLightmaps(size, lightmaps) {
 };
 
 export function buildShaders(shaders) {
-// q3bsp.prototype.buildShaders = function(shaders) {
+    // q3bsp.prototype.buildShaders = function(shaders) {
     var gl = this.gl;
-    
+
     for (var i = 0; i < shaders.length; ++i) {
         var shader = shaders[i];
         var glShader = q3glshader.build(gl, shader);
@@ -427,7 +434,7 @@ export function buildShaders(shaders) {
 };
 
 export function bindShaders() {
-// q3bsp.prototype.bindShaders = function() {
+    // q3bsp.prototype.bindShaders = function() {
     if (!this.surfaces) { return; }
 
     if (this.onsurfaces) {
@@ -442,10 +449,10 @@ export function bindShaders() {
 
     var map = this;
 
-    var interval = setInterval(function() {
+    var interval = setInterval(function () {
         if (map.unshadedSurfaces.length === 0) { // Have we processed all surfaces?
             // Sort to ensure correct order of transparent objects
-            map.effectSurfaces.sort(function(a, b) {
+            map.effectSurfaces.sort(function (a, b) {
                 var order = a.shader.sort - b.shader.sort;
                 // TODO: Sort by state here to cut down on changes?
                 return order; //(order == 0 ? 1 : order);
@@ -480,7 +487,7 @@ export function bindShaders() {
 
 // Update which portions of the map are visible based on position
 
-q3bsp.prototype.updateVisibility = function(pos) {
+q3bsp.prototype.updateVisibility = function (pos) {
     this.worker.postMessage({
         type: 'visibility',
         pos: pos
@@ -496,8 +503,8 @@ q3bsp.prototype.updateVisibility = function(pos) {
     // end dub call to exWorker
 };
 
-export function setVisibility(visibilityList) {
-// q3bsp.prototype.setVisibility = function(visibilityList) {
+// export function setVisibility(visibilityList) {
+q3bsp.prototype.setVisibility = function (visibilityList) {
     if (this.surfaces.length > 0) {
         for (var i = 0; i < this.surfaces.length; ++i) {
             this.surfaces[i].visible = (visibilityList[i] === true);
@@ -507,7 +514,7 @@ export function setVisibility(visibilityList) {
 
 // Draw the map
 
-q3bsp.prototype.bindShaderMatrix = function(shader, modelViewMat, projectionMat) {
+q3bsp.prototype.bindShaderMatrix = function (shader, modelViewMat, projectionMat) {
     var gl = this.gl;
 
     // Set uniforms
@@ -515,7 +522,7 @@ q3bsp.prototype.bindShaderMatrix = function(shader, modelViewMat, projectionMat)
     gl.uniformMatrix4fv(shader.uniform.projectionMat, false, projectionMat);
 }
 
-q3bsp.prototype.bindShaderAttribs = function(shader) {
+q3bsp.prototype.bindShaderAttribs = function (shader) {
     var gl = this.gl;
 
     // Setup vertex attributes
@@ -543,7 +550,7 @@ q3bsp.prototype.bindShaderAttribs = function(shader) {
     }
 }
 
-q3bsp.prototype.bindSkyMatrix = function(shader, modelViewMat, projectionMat) {
+q3bsp.prototype.bindSkyMatrix = function (shader, modelViewMat, projectionMat) {
     var gl = this.gl;
 
     mat4.copy(this.skyboxMat, modelViewMat);
@@ -557,7 +564,7 @@ q3bsp.prototype.bindSkyMatrix = function(shader, modelViewMat, projectionMat) {
     gl.uniformMatrix4fv(shader.uniform.projectionMat, false, projectionMat);
 };
 
-q3bsp.prototype.bindSkyAttribs = function(shader) {
+q3bsp.prototype.bindSkyAttribs = function (shader) {
     var gl = this.gl;
 
     // Setup vertex attributes
@@ -570,13 +577,13 @@ q3bsp.prototype.bindSkyAttribs = function(shader) {
     }
 };
 
-q3bsp.prototype.setViewport = function(viewport) {
+q3bsp.prototype.setViewport = function (viewport) {
     if (viewport) {
         this.gl.viewport(viewport.x, viewport.y, viewport.width, viewport.height);
     }
 }
 
-q3bsp.prototype.draw = function(leftViewMat, leftProjMat, leftViewport, rightViewMat, rightProjMat, rightViewport) {
+q3bsp.prototype.draw = function (leftViewMat, leftProjMat, leftViewport, rightViewMat, rightProjMat, rightViewport) {
     if (this.vertexBuffer === null || this.indexBuffer === null) { return; } // Not ready to draw yet
 
     var gl = this.gl; // Easier to type and potentially a bit faster
@@ -741,7 +748,7 @@ export function q3bsptree(bsp) { // ?
     this.bsp = bsp;
 };
 
-q3bsptree.prototype.trace = function(start, end, radius) {
+q3bsptree.prototype.trace = function (start, end, radius) {
     var output = {
         allSolid: false,
         startSolid: false,
@@ -766,7 +773,7 @@ q3bsptree.prototype.trace = function(start, end, radius) {
 
 var q3bsptree_trace_offset = 0.03125;
 
-q3bsptree.prototype.traceNode = function(nodeIdx, startFraction, endFraction, start, end, radius, output) {
+q3bsptree.prototype.traceNode = function (nodeIdx, startFraction, endFraction, start, end, radius, output) {
     if (nodeIdx < 0) { // Leaf node?
         var leaf = this.bsp.leaves[-(nodeIdx + 1)];
         for (var i = 0; i < leaf.leafBrushCount; i++) {
@@ -834,7 +841,7 @@ q3bsptree.prototype.traceNode = function(nodeIdx, startFraction, endFraction, st
     }
 };
 
-q3bsptree.prototype.traceBrush = function(brush, start, end, radius, output) {
+q3bsptree.prototype.traceBrush = function (brush, start, end, radius, output) {
     var startFraction = -1;
     var endFraction = 1;
     var startsOut = false;

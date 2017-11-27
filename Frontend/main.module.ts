@@ -122,21 +122,21 @@ function getQueryVariable(variable) {
 // not checked
 // // Set up basic GL State up front
 function initGL(gl, canvas) {
-        gl.clearColor(0.0, 0.0, 0.0, 1.0);
-        gl.clearDepth(1.0);
+    gl.clearColor(0.0, 0.0, 0.0, 1.0);
+    gl.clearDepth(1.0);
 
-        gl.enable(gl.DEPTH_TEST);
-        gl.enable(gl.BLEND);
-        gl.enable(gl.CULL_FACE);
+    gl.enable(gl.DEPTH_TEST);
+    gl.enable(gl.BLEND);
+    gl.enable(gl.CULL_FACE);
 
-        leftViewMat = mat4.create();
-        rightViewMat = mat4.create();
-        projMat = mat4.create();
+    leftViewMat = mat4.create();
+    rightViewMat = mat4.create();
+    projMat = mat4.create();
 
-        leftViewport = { x: 0, y: 0, width: 0, height: 0 };
-        rightViewport = { x: 0, y: 0, width: 0, height: 0 };
+    leftViewport = { x: 0, y: 0, width: 0, height: 0 };
+    rightViewport = { x: 0, y: 0, width: 0, height: 0 };
 
-        initMap(gl);
+    initMap(gl);
 }
 
 // not checked
@@ -156,7 +156,7 @@ function initMap(gl) {
         vrDrawMode = parseInt(vrMode, 10);
     }
 
-    map = new q3bsp(gl);
+    map = new q3bsp(gl); // ?
     map.onentitiesloaded = initMapEntities;
     map.onbsp = initPlayerMover;
     //map.onsurfaces = initSurfaces;
@@ -513,37 +513,37 @@ function getAvailableContext(canvas, contextList) {
 }
 
 function renderLoop(gl, stats) {
-        var startTime = new Date().getTime();
-        var lastTimestamp = startTime;
-        var lastFps = startTime;
+    var startTime = new Date().getTime();
+    var lastTimestamp = startTime;
+    var lastFps = startTime;
 
-        var frameId = 0;
+    var frameId = 0;
 
     function onRequestedFrame() {
         let timestamp;
-            timestamp = new Date().getTime();
+        timestamp = new Date().getTime();
 
-            if (vrDisplay && vrDisplay.isPresenting) {
-                vrDisplay.requestAnimationFrame(onRequestedFrame);
-            } else {
-                window.requestAnimationFrame(onRequestedFrame);
-            }
-
-            frameId++;
-            if (SKIP_FRAMES != 0 && frameId % SKIP_FRAMES != 0)
-                return;
-
-            stats.begin();
-
-            onFrame(gl, {
-                timestamp: timestamp,
-                elapsed: timestamp - startTime,
-                frameTime: timestamp - lastTimestamp
-            });
-
-            stats.end();
+        if (vrDisplay && vrDisplay.isPresenting) {
+            vrDisplay.requestAnimationFrame(onRequestedFrame);
+        } else {
+            window.requestAnimationFrame(onRequestedFrame);
         }
-        window.requestAnimationFrame(onRequestedFrame);
+
+        frameId++;
+        if (SKIP_FRAMES != 0 && frameId % SKIP_FRAMES != 0)
+            return;
+
+        stats.begin();
+
+        onFrame(gl, {
+            timestamp: timestamp,
+            elapsed: timestamp - startTime,
+            frameTime: timestamp - lastTimestamp
+        });
+
+        stats.end();
+    }
+    window.requestAnimationFrame(onRequestedFrame);
 }
 
 // declare var mat4;
