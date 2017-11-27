@@ -1,5 +1,31 @@
 // making class from function
 export class q3bsp {
+    entities: any;
+    bgMusic: any;
+    startTime: number;
+    bspTree: any;
+    effectSurfaces: any[];
+    modelSurfaces: any[];
+    defaultSurfaces: any[];
+    unshadedSurfaces: any[];
+    skyShader: any;
+    shaders: {};
+    surfaces: any;
+    lightmap: any;
+    indexCount: number;
+    indexBuffer: any;
+    vertexBuffer: any;
+    skyboxMat: any;
+    skyboxIndexCount: number;
+    skyboxIndexBuffer: any;
+    skyboxBuffer: any;
+    worker: any;
+    highlighted: any;
+    gl: any;
+    onload: any;
+    onbsp: any;
+    onentitiesloaded: any;
+    private map: any;
 
     constructor(gl) {
         this.gl = gl;
@@ -25,60 +51,18 @@ export class q3bsp {
         this.worker = new Worker('js/test_worker.js');
 
         // let qwe = new Worker(null);
-        this.workerTest = {
-            onmessageTest: function (x: any, y: any) {
-                console.log(x, y);
-            },
-        };
-
-        this.workerTest.onmessageTest('test ', ' custom function 1');
-
-        this.workerTest.onmessageTest2 = function (msg) {
-            console.log(msg);
-        };
-
-        this.workerTest.onmessageTest2('test custom function 2');
-
+        
         // postMessage test
         this.worker.postMessage({
             type: 'test',
             url: 'use postMessage'
         });
 
-        // moved from worker
-        // onmessage = function (msg) {
-        // let exWorkerOnmessage = function (msg) {
-        //     switch (msg.data.type) {
-        //         case 'load':
-        //             q3bspObj.load(msg.data.url, msg.data.tesselationLevel, function () {
-        //                 // Fallback to account for Opera handling URLs in a worker 
-        //                 // differently than other browsers. 
-        //                 q3bspObj.load("../" + msg.data.url, msg.data.tesselationLevel);
-        //             });
-        //             break;
-        //         case 'loadShaders':
-        //             q3shader.loadList(msg.data.sources);
-        //             break;
-        //         case 'trace':
-        //             q3bspObj.trace(msg.data.traceId, msg.data.start, msg.data.end, msg.data.radius, msg.data.slide);
-        //             break;
-        //         case 'visibility':
-        //             q3bspObj.buildVisibleList(q3bspObj.getLeaf(msg.data.pos));
-        //             break;
-        //         default:
-        //             throw 'Unexpected message type: ' + msg.data;
-        //     }
-        // };
 
-
-        // end of moved from worker
-
-
-
-        this.worker.onmessage = function (msg) {
+        this.worker.onmessage(msg) {
             map.onMessage(msg);
         };
-        this.worker.onerror = function (msg) {
+        this.worker.onerror(msg) {
             console.error('Line: ' + msg.lineno + ', ' + msg.message);
         };
 
@@ -116,4 +100,517 @@ export class q3bsp {
         console.log('f(x) q3bsp prototype field test');
     }
 
+    highlightShader(name) {
+        this.highlighted = name;
+    };
+
+    playMusic(play) {
+        if (!this.bgMusic) { return; }
+        if (play) {
+            this.bgMusic.play();
+        } else {
+            this.bgMusic.pause();
+        }
+    };
+
+    // export function onMessage(msg) {
+    onMessage(msg) {
+        console.log('what is it protorype?');
+        switch (msg.data.type) {
+            case 'entities':
+                this.entities = msg.data.entities;
+                this.processEntities(this.entities);
+                break;
+            case 'geometry':
+                this.buildBuffers(msg.data.vertices, msg.data.indices);
+                this.surfaces = msg.data.surfaces;
+                this.bindShaders();
+                break;
+            case 'lightmap':
+                this.buildLightmaps(msg.data.size, msg.data.lightmaps);
+                break;
+            case 'shaders':
+                this.buildShaders(msg.data.shaders);
+                break;
+            case 'bsp':
+                this.bspTree = new q3bsptree(msg.data.bsp);
+                if (this.onbsp) {
+                    this.onbsp(this.bspTree);
+                }
+                // clearLoadStatus();
+                // this.clearLoadStatus();
+                break;
+            case 'visibility':
+                this.setVisibility(msg.data.visibleSurfaces);
+                break;
+            case 'status':
+                this.onLoadStatus(msg.data.message);
+                break;
+            default:
+                throw 'Unexpected message type: ' + msg.data.type;
+        }
+    };
+
+    showLoadStatus() {
+        // Yeah, this shouldn't be hardcoded in here
+        var loading = document.getElementById('loading');
+        loading.style.display = 'block';
+    };
+
+    onLoadStatus(message) {
+        // Yeah, this shouldn't be hardcoded in here
+        var loading = document.getElementById('loading');
+        loading.innerHTML = message;
+    };
+
+    clearLoadStatus() {
+        // Yeah, this shouldn't be hardcoded in here
+        var loading = document.getElementById('loading');
+        loading.style.display = 'none';
+    };
+
+    load(url, tesselationLevel) {
+        if (!tesselationLevel) {
+            tesselationLevel = 5;
+        }
+        this.worker.postMessage({
+            type: 'load',
+            url: '../' + q3bsp_base_folder + '/' + url,
+            tesselationLevel: tesselationLevel
+        });
+        // start dub call to exWorker
+        // let msg = {
+        //     data: {
+        //         type: 'load',
+        //         url: '../' + q3bsp_base_folder + '/' + url,
+        //         tesselationLevel: tesselationLevel
+        //     },
+        // };
+        // myWorker.onmessage(msg);
+        // end dub call to exWorker
+    };
+
+    loadShaders(sources) {
+        var map = this; // ?
+
+        for (var i = 0; i < sources.length; ++i) {
+            sources[i] = q3bsp_base_folder + '/' + sources[i];
+        }
+
+        q3shader.loadList(sources, function (shaders) {
+            buildShaders(shaders);
+            // map.buildShaders(shaders);
+        });
+    };
+
+    // export function processEntities(entities) {
+    processEntities(entities) {
+        if (this.onentitiesloaded) {
+            this.onentitiesloaded(entities);
+        }
+
+        // Background music
+        /*if(entities.worldspawn[0].music) {
+            this.bgMusic = new Audio(q3bsp_base_folder + '/' + entities.worldspawn[0].music.replace('.wav', '.ogg'));
+            // TODO: When can we change this to simply setting the 'loop' property?
+            this.bgMusic.addEventListener('ended', function(){
+                this.currentTime = 0;
+            }, false);
+            this.bgMusic.play();
+        }*/
+
+        // It would be relatively easy to do some ambient sound processing here, but I don't really feel like
+        // HTML5 audio is up to the task. For example, lack of reliable gapless looping makes them sound terrible!
+        // Look into this more when browsers get with the program.
+        /*var speakers = entities.target_speaker;
+        for(var i = 0; i < 1; ++i) {
+            var speaker = speakers[i];
+            q3bspCreateSpeaker(speaker);
+        }*/
+    };
+    buildBuffers(vertices, indices) {
+        // buildBuffers = function(vertices, indices) {
+        var gl = this.gl;
+
+        this.vertexBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+
+        this.indexBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
+
+        this.indexCount = indices.length;
+
+        var skyVerts = [-128, 128, 128, 0, 0,
+            128, 128, 128, 1, 0, -128, -128, 128, 0, 1,
+            128, -128, 128, 1, 1,
+
+        -128, 128, 128, 0, 1,
+            128, 128, 128, 1, 1, -128, 128, -128, 0, 0,
+            128, 128, -128, 1, 0,
+
+        -128, -128, 128, 0, 0,
+            128, -128, 128, 1, 0, -128, -128, -128, 0, 1,
+            128, -128, -128, 1, 1,
+
+            128, 128, 128, 0, 0,
+            128, -128, 128, 0, 1,
+            128, 128, -128, 1, 0,
+            128, -128, -128, 1, 1,
+
+        -128, 128, 128, 1, 0, -128, -128, 128, 1, 1, -128, 128, -128, 0, 0, -128, -128, -128, 0, 1
+        ];
+
+        var skyIndices = [
+            0, 1, 2,
+            1, 2, 3,
+
+            4, 5, 6,
+            5, 6, 7,
+
+            8, 9, 10,
+            9, 10, 11,
+
+            12, 13, 14,
+            13, 14, 15,
+
+            16, 17, 18,
+            17, 18, 19
+        ];
+
+        this.skyboxBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.skyboxBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(skyVerts), gl.STATIC_DRAW);
+
+        this.skyboxIndexBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.skyboxIndexBuffer);
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(skyIndices), gl.STATIC_DRAW);
+
+        this.skyboxIndexCount = skyIndices.length;
+    };
+    
+    buildLightmaps(size, lightmaps) {
+        var gl = this.gl;
+
+        gl.bindTexture(gl.TEXTURE_2D, this.lightmap);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, size, size, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+
+        for (var i = 0; i < lightmaps.length; ++i) {
+            gl.texSubImage2D(
+                gl.TEXTURE_2D, 0, lightmaps[i].x, lightmaps[i].y, lightmaps[i].width, lightmaps[i].height,
+                gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array(lightmaps[i].bytes)
+            );
+        }
+
+        gl.generateMipmap(gl.TEXTURE_2D);
+
+        q3glshader.init(gl, this.lightmap);
+    };
+
+    bindShaders() {
+        if (!this.surfaces) { return; }
+
+        if (this.onsurfaces) {
+            this.onsurfaces(this.surfaces);
+        }
+
+        for (var i = 0; i < this.surfaces.length; ++i) {
+            var surface = this.surfaces[i];
+            if (surface.elementCount === 0 || surface.shader || surface.shaderName == 'noshader') { continue; }
+            this.unshadedSurfaces.push(surface);
+        }
+
+        var map = this;
+
+        var interval = setInterval(function () {
+            if (map.unshadedSurfaces.length === 0) { // Have we processed all surfaces?
+                // Sort to ensure correct order of transparent objects
+                map.effectSurfaces.sort(function (a, b) {
+                    var order = a.shader.sort - b.shader.sort;
+                    // TODO: Sort by state here to cut down on changes?
+                    return order; //(order == 0 ? 1 : order);
+                });
+
+                clearInterval(interval);
+                return;
+            }
+
+            var surface = map.unshadedSurfaces.shift();
+
+            var shader = map.shaders[surface.shaderName];
+            if (!shader) {
+                surface.shader = q3glshader.buildDefault(map.gl, surface);
+                if (surface.geomType == 3) {
+                    surface.shader.model = true;
+                    map.modelSurfaces.push(surface);
+                } else {
+                    map.defaultSurfaces.push(surface);
+                }
+            } else {
+                surface.shader = shader;
+                if (shader.sky) {
+                    map.skyShader = shader; // Sky does not get pushed into effectSurfaces. It's a separate pass
+                } else {
+                    map.effectSurfaces.push(surface);
+                }
+                q3glshader.loadShaderMaps(map.gl, surface, shader);
+            }
+        }, 10);
+    };
+
+    // Update which portions of the map are visible based on position
+
+    updateVisibility(pos) {
+        this.worker.postMessage({
+            type: 'visibility',
+            pos: pos
+        });
+        // start dub call to exWorker
+        let msg = {
+            data: {
+                type: 'visibility',
+                pos: pos
+            },
+        };
+        myWorker.onmessage(msg);
+        // end dub call to exWorker
+    };
+
+    // export function setVisibility(visibilityList) {
+    setVisibility(visibilityList) {
+        if (this.surfaces.length > 0) {
+            for (var i = 0; i < this.surfaces.length; ++i) {
+                this.surfaces[i].visible = (visibilityList[i] === true);
+            }
+        }
+    };
+
+    // Draw the map
+
+    bindShaderMatrix(shader, modelViewMat, projectionMat) {
+        var gl = this.gl;
+
+        // Set uniforms
+        gl.uniformMatrix4fv(shader.uniform.modelViewMat, false, modelViewMat);
+        gl.uniformMatrix4fv(shader.uniform.projectionMat, false, projectionMat);
+    }
+
+    bindShaderAttribs(shader) {
+        var gl = this.gl;
+
+        // Setup vertex attributes
+        gl.enableVertexAttribArray(shader.attrib.position);
+        gl.vertexAttribPointer(shader.attrib.position, 3, gl.FLOAT, false, q3bsp_vertex_stride, 0);
+
+        if (shader.attrib.texCoord !== undefined) {
+            gl.enableVertexAttribArray(shader.attrib.texCoord);
+            gl.vertexAttribPointer(shader.attrib.texCoord, 2, gl.FLOAT, false, q3bsp_vertex_stride, 3 * 4);
+        }
+
+        if (shader.attrib.lightCoord !== undefined) {
+            gl.enableVertexAttribArray(shader.attrib.lightCoord);
+            gl.vertexAttribPointer(shader.attrib.lightCoord, 2, gl.FLOAT, false, q3bsp_vertex_stride, 5 * 4);
+        }
+
+        if (shader.attrib.normal !== undefined) {
+            gl.enableVertexAttribArray(shader.attrib.normal);
+            gl.vertexAttribPointer(shader.attrib.normal, 3, gl.FLOAT, false, q3bsp_vertex_stride, 7 * 4);
+        }
+
+        if (shader.attrib.color !== undefined) {
+            gl.enableVertexAttribArray(shader.attrib.color);
+            gl.vertexAttribPointer(shader.attrib.color, 4, gl.FLOAT, false, q3bsp_vertex_stride, 10 * 4);
+        }
+    }
+
+    bindSkyMatrix(shader, modelViewMat, projectionMat) {
+        var gl = this.gl;
+
+        mat4.copy(this.skyboxMat, modelViewMat);
+        // Clear out the translation components
+        this.skyboxMat[12] = 0;
+        this.skyboxMat[13] = 0;
+        this.skyboxMat[14] = 0;
+
+        // Set uniforms
+        gl.uniformMatrix4fv(shader.uniform.modelViewMat, false, this.skyboxMat);
+        gl.uniformMatrix4fv(shader.uniform.projectionMat, false, projectionMat);
+    };
+
+    bindSkyAttribs(shader) {
+        var gl = this.gl;
+
+        // Setup vertex attributes
+        gl.enableVertexAttribArray(shader.attrib.position);
+        gl.vertexAttribPointer(shader.attrib.position, 3, gl.FLOAT, false, q3bsp_sky_vertex_stride, 0);
+
+        if (shader.attrib.texCoord !== undefined) {
+            gl.enableVertexAttribArray(shader.attrib.texCoord);
+            gl.vertexAttribPointer(shader.attrib.texCoord, 2, gl.FLOAT, false, q3bsp_sky_vertex_stride, 3 * 4);
+        }
+    };
+
+    setViewport(viewport) {
+        if (viewport) {
+            this.gl.viewport(viewport.x, viewport.y, viewport.width, viewport.height);
+        }
+    }
+
+    draw(leftViewMat, leftProjMat, leftViewport, rightViewMat, rightProjMat, rightViewport) {
+        if (this.vertexBuffer === null || this.indexBuffer === null) { return; } // Not ready to draw yet
+
+        var gl = this.gl; // Easier to type and potentially a bit faster
+
+        // Seconds passed since map was initialized
+        var time = (new Date().getTime() - this.startTime) / 1000.0;
+        var i = 0;
+
+        // Loop through all shaders, drawing all surfaces associated with them
+        if (this.surfaces.length > 0) {
+
+            // If we have a skybox, render it first
+            if (this.skyShader) {
+                // SkyBox Buffers
+                gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.skyboxIndexBuffer);
+                gl.bindBuffer(gl.ARRAY_BUFFER, this.skyboxBuffer);
+
+                // Render Skybox
+                if (q3glshader.setShader(gl, this.skyShader)) {
+                    for (var j = 0; j < this.skyShader.stages.length; ++j) {
+                        var stage = this.skyShader.stages[j];
+
+                        var shaderProgram = q3glshader.setShaderStage(gl, this.skyShader, stage, time);
+                        if (!shaderProgram) { continue; }
+                        this.bindSkyAttribs(shaderProgram);
+
+                        // Draw Sky geometry
+                        this.bindSkyMatrix(shaderProgram, leftViewMat, leftProjMat);
+                        this.setViewport(leftViewport);
+                        gl.drawElements(gl.TRIANGLES, this.skyboxIndexCount, gl.UNSIGNED_SHORT, 0);
+
+                        if (rightViewMat) {
+                            this.bindSkyMatrix(shaderProgram, rightViewMat, rightProjMat);
+                            this.setViewport(rightViewport);
+                            gl.drawElements(gl.TRIANGLES, this.skyboxIndexCount, gl.UNSIGNED_SHORT, 0);
+                        }
+                    }
+                }
+            }
+
+            // Map Geometry buffers
+            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
+            gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
+
+            // Default shader surfaces (can bind shader once and draw all of them very quickly)
+            if (this.defaultSurfaces.length > 0 || this.unshadedSurfaces.length > 0) {
+                // Setup State
+                var shader = q3glshader.defaultShader;
+                q3glshader.setShader(gl, shader);
+                var shaderProgram = q3glshader.setShaderStage(gl, shader, shader.stages[0], time);
+                this.bindShaderAttribs(shaderProgram);
+
+                gl.activeTexture(gl.TEXTURE0);
+                gl.bindTexture(gl.TEXTURE_2D, q3glshader.defaultTexture);
+
+                this.bindShaderMatrix(shaderProgram, leftViewMat, leftProjMat);
+                this.setViewport(leftViewport);
+                for (i = 0; i < this.unshadedSurfaces.length; ++i) {
+                    var surface = this.unshadedSurfaces[i];
+                    gl.drawElements(gl.TRIANGLES, surface.elementCount, gl.UNSIGNED_SHORT, surface.indexOffset);
+                }
+                for (i = 0; i < this.defaultSurfaces.length; ++i) {
+                    var surface = this.defaultSurfaces[i];
+                    var stage = surface.shader.stages[0];
+                    gl.bindTexture(gl.TEXTURE_2D, stage.texture);
+                    gl.drawElements(gl.TRIANGLES, surface.elementCount, gl.UNSIGNED_SHORT, surface.indexOffset);
+                }
+
+                if (rightViewMat) {
+                    gl.activeTexture(gl.TEXTURE0);
+                    gl.bindTexture(gl.TEXTURE_2D, q3glshader.defaultTexture);
+
+                    this.bindShaderMatrix(shaderProgram, rightViewMat, rightProjMat);
+                    this.setViewport(rightViewport);
+                    for (i = 0; i < this.unshadedSurfaces.length; ++i) {
+                        var surface = this.unshadedSurfaces[i];
+                        gl.drawElements(gl.TRIANGLES, surface.elementCount, gl.UNSIGNED_SHORT, surface.indexOffset);
+                    }
+
+                    for (i = 0; i < this.defaultSurfaces.length; ++i) {
+                        var surface = this.defaultSurfaces[i];
+                        var stage = surface.shader.stages[0];
+                        gl.bindTexture(gl.TEXTURE_2D, stage.texture);
+                        gl.drawElements(gl.TRIANGLES, surface.elementCount, gl.UNSIGNED_SHORT, surface.indexOffset);
+                    }
+                }
+            }
+
+            // Model shader surfaces (can bind shader once and draw all of them very quickly)
+            if (this.modelSurfaces.length > 0) {
+                // Setup State
+                var shader = this.modelSurfaces[0].shader;
+                q3glshader.setShader(gl, shader);
+                var shaderProgram = q3glshader.setShaderStage(gl, shader, shader.stages[0], time);
+                this.bindShaderAttribs(shaderProgram);
+                gl.activeTexture(gl.TEXTURE0);
+
+                this.bindShaderMatrix(shaderProgram, leftViewMat, leftProjMat);
+                this.setViewport(leftViewport);
+                for (i = 0; i < this.modelSurfaces.length; ++i) {
+                    var surface = this.modelSurfaces[i];
+                    var stage = surface.shader.stages[0];
+                    gl.bindTexture(gl.TEXTURE_2D, stage.texture);
+                    gl.drawElements(gl.TRIANGLES, surface.elementCount, gl.UNSIGNED_SHORT, surface.indexOffset);
+                }
+
+                if (rightViewMat) {
+                    this.bindShaderMatrix(shaderProgram, rightViewMat, rightProjMat);
+                    this.setViewport(rightViewport);
+                    for (i = 0; i < this.modelSurfaces.length; ++i) {
+                        var surface = this.modelSurfaces[i];
+                        var stage = surface.shader.stages[0];
+                        gl.bindTexture(gl.TEXTURE_2D, stage.texture);
+                        gl.drawElements(gl.TRIANGLES, surface.elementCount, gl.UNSIGNED_SHORT, surface.indexOffset);
+                    }
+                }
+            }
+
+            // Effect surfaces
+            for (var i = 0; i < this.effectSurfaces.length; ++i) {
+                var surface = this.effectSurfaces[i];
+                if (surface.elementCount == 0 || surface.visible !== true) { continue; }
+
+                // Bind the surface shader
+                var shader = surface.shader;
+
+                if (this.highlighted && this.highlighted == surface.shaderName) {
+                    shader = q3glshader.defaultShader;
+                }
+
+                if (!q3glshader.setShader(gl, shader)) { continue; }
+
+                for (var j = 0; j < shader.stages.length; ++j) {
+                    var stage = shader.stages[j];
+
+                    var shaderProgram = q3glshader.setShaderStage(gl, shader, stage, time);
+                    if (!shaderProgram) { continue; }
+                    this.bindShaderAttribs(shaderProgram);
+                    this.bindShaderMatrix(shaderProgram, leftViewMat, leftProjMat);
+                    this.setViewport(leftViewport);
+                    // Draw all geometry that uses this textures
+                    gl.drawElements(gl.TRIANGLES, surface.elementCount, gl.UNSIGNED_SHORT, surface.indexOffset);
+
+                    if (rightViewMat) {
+                        this.bindShaderMatrix(shaderProgram, rightViewMat, rightProjMat);
+                        this.setViewport(rightViewport);
+                        // Draw all geometry that uses this textures
+                        gl.drawElements(gl.TRIANGLES, surface.elementCount, gl.UNSIGNED_SHORT, surface.indexOffset);
+                    }
+                }
+            }
+        }
+    };
 }
