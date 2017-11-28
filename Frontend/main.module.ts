@@ -19,6 +19,7 @@ import {
 import { q3bsp } from "./q3bsp";
 import { q3movement } from "./q3movement";
 import { frob } from "./util/gl-matrix/gl-matrix/mat4";
+import { MainClass } from "./main.module_to_class";
 
 /*
  * main.js - Setup for Quake 3 WebGL demo
@@ -781,4 +782,8 @@ function main() {
     mobileVrBtn.addEventListener("click", presentVR, false);
 
 }
-window.addEventListener("load", main); // Fire this once the page is loaded up
+// window.addEventListener("load", main); // Fire this once the page is loaded up
+// main();
+
+let fireup = new MainClass;
+fireup.main();
