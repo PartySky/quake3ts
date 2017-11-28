@@ -69,8 +69,9 @@ instance1.greet();
 
 export function q3bspPrototype(gl) { }
 
-export let q3bsp1 = new q3bspPrototype(gl);
+// export let q3bsp1 = new q3bspPrototype(gl);
 export function q3bsp(gl) {
+    console.log('First string of q3bsp prototype');
     // testField: function() { };
     // var testField = null; 
 
@@ -204,9 +205,15 @@ q3bsp.prototype.playMusic = function (play) {
     }
 };
 
+export function onMessage(msg) {
+    console.log('mock onMessage');
+}
+
+
 // export function onMessage(msg) {
 q3bsp.prototype.onMessage = function (msg) {
     console.log('what is it protorype?');
+    let glTemp = this.gl // hardcode glTemp
     switch (msg.data.type) {
         case 'entities':
             this.entities = msg.data.entities;
@@ -225,7 +232,7 @@ q3bsp.prototype.onMessage = function (msg) {
             // this.buildLightmaps(msg.data.size, msg.data.lightmaps);
             break;
         case 'shaders':
-            buildShaders(msg.data.shaders);
+            buildShaders(msg.data.shaders, glTemp); // hardcode glTemp
             // this.buildShaders(msg.data.shaders);
             break;
         case 'bsp':
@@ -296,9 +303,10 @@ q3bsp.prototype.loadShaders = function (sources) {
     for (var i = 0; i < sources.length; ++i) {
         sources[i] = q3bsp_base_folder + '/' + sources[i];
     }
-
+    var glTemp = this.gl; // hardcode
     q3shader.loadList(sources, function (shaders) {
-        buildShaders(shaders);
+        buildShaders(shaders, glTemp); // hardcode
+        // buildShaders(shaders);
         // map.buildShaders(shaders);
     });
 };
@@ -422,9 +430,10 @@ export function buildLightmaps(size, lightmaps) {
     q3glshader.init(gl, this.lightmap);
 };
 
-export function buildShaders(shaders) {
+export function buildShaders(shaders, glTemp) {  // hardcode glTemp
     // q3bsp.prototype.buildShaders = function(shaders) {
-    var gl = this.gl;
+    // var gl = this.gl; // temporary turned off
+    let gl = glTemp; // hardcode glTemp
 
     for (var i = 0; i < shaders.length; ++i) {
         var shader = shaders[i];

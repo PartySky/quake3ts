@@ -36,11 +36,14 @@ import { vec3 } from "./util/gl-matrix/gl-matrix";
 import { BinaryFile } from "./util/binary-file";
 import {
     q3bsp,
-    // onMessage,
+    onMessage,
     LearnPrototype,
     instance1
 } from "./q3bsp";
 import { inspect } from "util";
+import { initMap, map } from "./main.module";
+
+
 
 // console.log('Calling imported instance method test');
 // instance1.greet();
@@ -146,7 +149,6 @@ q3bspObj.parse = function (src, tesselationLevel) {
     };
     // q3bsp.Test();
     // q3bsp.onMessage();
-    q3bsp.test3();
     // onMessage(msg);
     // end dub call to q3bsp's function
 
@@ -168,6 +170,7 @@ q3bspObj.parse = function (src, tesselationLevel) {
             },
         };
         onMessage(msg);
+        map.onMessage(msg);
         // end dub call to q3bsp's function
         return;
     }
@@ -328,6 +331,7 @@ q3bspObj.readEntities = function (lump, src) {
         },
     };
     onMessage(msg);
+    map.onMessage(msg);
     // end dub call to q3bsp's function
 };
 

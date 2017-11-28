@@ -141,7 +141,7 @@ function initGL(gl, canvas) {
 
 // not checked
 // // Load the map
-function initMap(gl) {
+export function initMap(gl) {
     var titleEl = document.getElementById("mapTitle");
     // titleEl.innerHtml = mapName.toUpperCase();
     titleEl.innerHTML = mapName.toUpperCase();
