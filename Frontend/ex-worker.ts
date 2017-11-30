@@ -201,6 +201,7 @@ q3bspObj.parse = function (src, tesselationLevel) {
         },
     };
     onMessage(msg);
+    map.onMessage(msg);
     // end dub call to q3bsp's function
 
     // Load bsp components
@@ -251,6 +252,7 @@ q3bspObj.parse = function (src, tesselationLevel) {
         },
     };
     onMessage(msgBsp);
+    map.onMessage(msgBsp);
     // end dub call to q3bsp's function
 };
 
@@ -474,6 +476,7 @@ q3bspObj.readLightmaps = function (lump, src) {
         },
     };
     onMessage(msg);
+    map.onMessage(msg);
     // end dub call to q3bsp's function
 
     return lightmapRects;
@@ -707,6 +710,7 @@ q3bspObj.compileMap = function (verts, faces, meshVerts, lightmaps, shaders, tes
         },
     };
     onMessage(msg);
+    map.onMessage(msg);
     // end dub call to q3bsp's function
 
     // Find associated shaders for all clusters
@@ -749,6 +753,7 @@ q3bspObj.compileMap = function (verts, faces, meshVerts, lightmaps, shaders, tes
                     },
                 };
                 onMessage(msg);
+                map.onMessage(msg);
                 // end dub call to q3bsp's function
 
                 // Build Bezier curve
@@ -827,6 +832,7 @@ q3bspObj.compileMap = function (verts, faces, meshVerts, lightmaps, shaders, tes
         },
     };
     onMessage(msgGeometry);
+    map.onMessage(msgGeometry);
     // end dub call to q3bsp's function
 };
 
@@ -1028,6 +1034,7 @@ q3bspObj.trace = function (traceId, start, end, radius, slide) {
         },
     };
     onMessage(msg);
+    map.onMessage(msg);
     // end dub call to q3bsp's function
 };
 
@@ -1236,5 +1243,6 @@ q3bspObj.buildVisibleList = function (leafIndex) {
         },
     };
     onMessage(msg);
+    map.onMessage(msg);
     // end dub call to q3bsp's function
 };

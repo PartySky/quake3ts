@@ -221,15 +221,15 @@ q3bsp.prototype.onMessage = function (msg) {
             this.processEntities(this.entities);
             break;
         case 'geometry':
-            buildBuffers(msg.data.vertices, msg.data.indices);
-            // this.buildBuffers(msg.data.vertices, msg.data.indices);
+            // buildBuffers(msg.data.vertices, msg.data.indices);
+            this.buildBuffers(msg.data.vertices, msg.data.indices);
             this.surfaces = msg.data.surfaces;
             // bindShaders();
             this.bindShaders();
             break;
         case 'lightmap':
-            buildLightmaps(msg.data.size, msg.data.lightmaps);
-            // this.buildLightmaps(msg.data.size, msg.data.lightmaps);
+            // buildLightmaps(msg.data.size, msg.data.lightmaps);
+            this.buildLightmaps(msg.data.size, msg.data.lightmaps);
             break;
         case 'shaders':
             // buildShaders(msg.data.shaders, glTemp); // hardcode glTemp
@@ -347,8 +347,8 @@ function q3bspCreateSpeaker(speaker) {
     speaker.audio.play();
 };
 
-export function buildBuffers(vertices, indices) {
-    // q3bsp.prototype.buildBuffers = function(vertices, indices) {
+// export function buildBuffers(vertices, indices) {
+q3bsp.prototype.buildBuffers = function (vertices, indices) {
     var gl = this.gl;
 
     this.vertexBuffer = gl.createBuffer();
@@ -409,8 +409,8 @@ export function buildBuffers(vertices, indices) {
     this.skyboxIndexCount = skyIndices.length;
 };
 
-export function buildLightmaps(size, lightmaps) {
-    // q3bsp.prototype.buildLightmaps = function(size, lightmaps) {
+// export function buildLightmaps(size, lightmaps) {
+q3bsp.prototype.buildLightmaps = function (size, lightmaps) {
     var gl = this.gl;
 
     gl.bindTexture(gl.TEXTURE_2D, this.lightmap);
@@ -752,8 +752,8 @@ q3bsp.prototype.draw = function (leftViewMat, leftProjMat, leftViewport, rightVi
 //
 // BSP Tree Collision Detection
 //
-export function q3bsptree(bsp) { // ?
-    // q3bsptree = function(bsp) {
+// export function q3bsptree(bsp) { // ?
+let q3bsptree = function (bsp) {
     this.bsp = bsp;
 };
 
