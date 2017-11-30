@@ -224,16 +224,16 @@ q3bsp.prototype.onMessage = function (msg) {
             buildBuffers(msg.data.vertices, msg.data.indices);
             // this.buildBuffers(msg.data.vertices, msg.data.indices);
             this.surfaces = msg.data.surfaces;
-            bindShaders();
-            // this.bindShaders();
+            // bindShaders();
+            this.bindShaders();
             break;
         case 'lightmap':
             buildLightmaps(msg.data.size, msg.data.lightmaps);
             // this.buildLightmaps(msg.data.size, msg.data.lightmaps);
             break;
         case 'shaders':
-            buildShaders(msg.data.shaders, glTemp); // hardcode glTemp
-            // this.buildShaders(msg.data.shaders);
+            // buildShaders(msg.data.shaders, glTemp); // hardcode glTemp
+            this.buildShaders(msg.data.shaders);
             break;
         case 'bsp':
             this.bspTree = new q3bsptree(msg.data.bsp);
@@ -305,9 +305,9 @@ q3bsp.prototype.loadShaders = function (sources) {
     }
     var glTemp = this.gl; // hardcode
     q3shader.loadList(sources, function (shaders) {
-        buildShaders(shaders, glTemp); // hardcode
+        // buildShaders(shaders, glTemp); // hardcode
         // buildShaders(shaders);
-        // map.buildShaders(shaders);
+        map.buildShaders(shaders);
     });
 };
 
@@ -430,10 +430,10 @@ export function buildLightmaps(size, lightmaps) {
     q3glshader.init(gl, this.lightmap);
 };
 
-export function buildShaders(shaders, glTemp) {  // hardcode glTemp
-    // q3bsp.prototype.buildShaders = function(shaders) {
-    // var gl = this.gl; // temporary turned off
-    let gl = glTemp; // hardcode glTemp
+// export function buildShaders(shaders, glTemp) {  // hardcode glTemp
+q3bsp.prototype.buildShaders = function (shaders) {
+    var gl = this.gl; // temporary turned off
+    // let gl = glTemp; // hardcode glTemp
 
     for (var i = 0; i < shaders.length; ++i) {
         var shader = shaders[i];
@@ -442,8 +442,8 @@ export function buildShaders(shaders, glTemp) {  // hardcode glTemp
     }
 };
 
-export function bindShaders() {
-    // q3bsp.prototype.bindShaders = function() {
+// export function bindShaders() {
+q3bsp.prototype.bindShaders = function () {
     if (!this.surfaces) { return; }
 
     if (this.onsurfaces) {
